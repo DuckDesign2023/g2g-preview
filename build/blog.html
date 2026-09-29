@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- title/description — с текущего сайта g2ggroup.com, до SEO-правок -->
+  <title>Forex Blog | G2G Group LTD</title>
+  <meta name="description" content="Explore expert Forex trading strategies, and market analysis. Learn to trade currencies, manage risk, and improve performance with G2G Group.">
+  <meta name="theme-color" content="#071212">
+  <!-- фавиконка — текущая клиента (g2ggroup.com), до новой от дизайнеров -->
+  <link rel="icon" href="assets/img/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="assets/img/favicon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="preload" href="assets/fonts/funnel-display-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="preload" href="assets/img/inner-hero-bg.webp" as="image">
+  <script src="js/header.js" defer></script>
+  <script src="js/analytics.js" defer></script>
+  <script src="js/quotes.js" defer></script>
+  <script src="js/globe.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Шапка (Figma 4008:65). Transparent над героем → Solid после прокрутки (js/header.js) -->
+  <header class="site-header" data-el="header" data-name="site-header">
+    <div class="site-header__bar" data-el="container">
+      <a class="site-header__logo" href="#" data-el="image">
+        <img class="site-header__logo-img" src="assets/img/logo.svg" width="112" height="28" alt="G2G">
+      </a>
+
+      <nav class="site-header__nav" aria-label="Main" data-el="nav">
+        <ul class="site-header__menu">
+          <li><a class="site-header__link site-header__link--sub" href="#">Markets</a></li>
+          <li><a class="site-header__link" href="#">Accounts</a></li>
+          <li><a class="site-header__link" href="#">Platform</a></li>
+          <li><a class="site-header__link" href="#">Funding</a></li>
+          <li><a class="site-header__link" href="#">Business</a></li>
+          <li><a class="site-header__link site-header__link--sub" href="#">Conditions</a></li>
+          <li><a class="site-header__link site-header__link--active" href="#">Blog</a></li>
+        </ul>
+      </nav>
+
+      <div class="site-header__actions" data-el="container">
+        <a class="btn btn--outline site-header__login" href="https://portal.g2ggroup.com/en/login" data-el="button" data-event="click_login" data-placement="header">Log in</a>
+        <a class="btn btn--primary site-header__cta" href="https://portal.g2ggroup.com/en/register" data-el="button" data-event="click_open_account" data-placement="header">Open Account</a>
+        <button class="site-header__burger" type="button" aria-expanded="false" aria-controls="site-drawer" aria-label="Open menu"></button>
+      </div>
+    </div>
+
+    <!-- Мобильное меню ≤1024 — наше решение (макетов нет) -->
+    <div class="site-header__drawer" id="site-drawer" hidden>
+      <nav aria-label="Mobile" data-el="nav">
+        <ul class="site-header__drawer-menu">
+          <li><a class="site-header__drawer-link" href="#">Markets</a></li>
+          <li><a class="site-header__drawer-link" href="#">Accounts</a></li>
+          <li><a class="site-header__drawer-link" href="#">Platform</a></li>
+          <li><a class="site-header__drawer-link" href="#">Funding</a></li>
+          <li><a class="site-header__drawer-link" href="#">Business</a></li>
+          <li><a class="site-header__drawer-link" href="#">Conditions</a></li>
+          <li><a class="site-header__drawer-link" href="#" aria-current="page">Blog</a></li>
+        </ul>
+      </nav>
+      <div class="site-header__drawer-actions" data-el="container">
+        <a class="btn btn--primary btn--lg btn--block" href="https://portal.g2ggroup.com/en/register" data-el="button" data-event="click_open_account" data-placement="header">Open Account</a>
+        <a class="btn btn--outline btn--lg btn--block" href="https://portal.g2ggroup.com/en/login" data-el="button" data-event="click_login" data-placement="header">Log in</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- section: page-hero (Inner Hero 6013:293, экземпляр 6022:2650) — без кнопок: пустой фрейм 58 держит высоту -->
+    <section class="page-hero theme-dark" data-el="container" data-name="page-hero">
+      <div class="page-hero__inner container" data-el="container">
+        <nav class="page-hero__breadcrumb" aria-label="Breadcrumb" data-el="nav">
+          <ol class="breadcrumb">
+            <li class="breadcrumb__item breadcrumb__item--sep"><a class="breadcrumb__link" href="#">Home</a></li>
+            <li class="breadcrumb__item breadcrumb__item--path" aria-current="page">Blog</li>
+          </ol>
+        </nav>
+        <div class="page-hero__copy" data-el="container">
+          <h1 class="page-hero__title type-h1" data-el="heading">Trading <span class="page-hero__accent">Insights &amp; Education</span></h1>
+          <div class="page-hero__texts" data-el="container">
+            <p class="page-hero__lead type-body-lg" data-el="text">Explore articles on financial markets, trading analysis, risk management, trading strategies, and the factors that influence market behaviour.</p>
+          </div>
+        </div>
+        <div class="page-hero__actions page-hero__actions--empty" aria-hidden="true" data-el="container"></div>
+        <!-- Арт страницы (Rectangle 6064:5595, заливка FILL): облачко чата -->
+        <img class="page-hero__art" src="assets/img/hero-art-blog.webp" width="536" height="486" alt="" decoding="async" fetchpriority="high" data-el="image">
+      </div>
+    </section>
+
+    <!-- section: blog-latest (Latest articles 6115:3915). В WP — Loop Grid / архив записей: карточки и пагинация из постов.
+         Тексты и обложки карточек — заглушки из Figma; все ведут на шаблон статьи article.html -->
+    <section class="blog-latest theme-light" data-el="container" data-name="latest-articles">
+      <div class="blog-latest__inner container" data-el="container">
+        <div class="section-head" data-el="container">
+          <p class="section-head__overline type-overline" data-el="text">Latest articles</p>
+          <h2 class="section-head__title type-h2" data-el="heading">Latest From G2G</h2>
+        </div>
+        <!-- repeat: article-card (image, category, date, title, excerpt, link) — Article card 6115:3921.
+             Ссылка «Read Article» дублирует заголовок-ссылку — убрана из порядка табуляции и от скринридера -->
+        <div class="article-grid" data-el="loop-grid">
+          <article class="article-card" data-el="container">
+            <div class="article-card__media" data-el="container"><img class="article-card__img" src="assets/img/blog-card-1.webp" width="410" height="200" alt="" loading="lazy" decoding="async" data-el="image"></div>
+            <div class="article-card__body" data-el="container">
+              <div class="article-card__meta" data-el="container">
+                <p class="pill pill--neutral" data-el="text">Market Analysis</p>
+                <time class="article-card__date type-caption" datetime="2026-08-29" data-el="text">August 29, 2026</time>
+              </div>
+              <h3 class="article-card__title type-h4" data-el="heading"><a href="#">How Emerging Markets Are Reshaping Global Investment Strategies</a></h3>
+              <p class="article-card__excerpt type-small" data-el="text">A deep dive into the shifting dynamics of emerging economies and what they mean for portfolio diversification in a volatile landscape.</p>
+              <a class="btn btn--ghost article-card__link" href="#" tabindex="-1" aria-hidden="true" data-el="button">Read Article</a>
+            </div>
+          </article>
+          <article class="article-card" data-el="container">
+            <div class="article-card__media" data-el="container"><img class="article-card__img" src="assets/img/blog-card-2.webp" width="410" height="200" alt="" loading="lazy" decoding="async" data-el="image"></div>
+            <div class="article-card__body" data-el="container">
+              <div class="article-card__meta" data-el="container">
+                <p class="pill pill--neutral" data-el="text">Technological Trends</p>
+                <time class="article-card__date type-caption" datetime="2026-09-15" data-el="text">September 15, 2026</time>
+              </div>
+              <h3 class="article-card__title type-h4" data-el="heading"><a href="#">The Rise of AI in Everyday Business Operations</a></h3>
+              <p class="article-card__excerpt type-small" data-el="text">Exploring how artificial intelligence is streamlining processes and enhancing productivity across various industries.</p>
+              <a class="btn btn--ghost article-card__link" href="#" tabindex="-1" aria-hidden="true" data-el="button">Discover More</a>
+            </div>
+          </article>
+          <article class="article-card" data-el="container">
+            <div class="article-card__media" data-el="container"><img class="article-card__img" src="assets/img/blog-card-3.webp" width="410" height="200" alt="" loading="lazy" decoding="async" data-el="image"></div>
+            <div class="article-card__body" data-el="container">
+              <div class="article-card__meta" data-el="container">
+                <p class="pill pill--neutral" data-el="text">Consumer Behavior</p>
+                <time class="article-card__date type-caption" datetime="2026-10-05" data-el="text">October 5, 2026</time>
+              </div>
+              <h3 class="article-card__title type-h4" data-el="heading"><a href="#">Shifts in Buying Patterns Post-Pandemic</a></h3>
+              <p class="article-card__excerpt type-small" data-el="text">Analyzing the long-term effects of the pandemic on consumer preferences and spending habits.</p>
+              <a class="btn btn--ghost article-card__link" href="#" tabindex="-1" aria-hidden="true" data-el="button">Learn More</a>
+            </div>
+          </article>
+          <article class="article-card" data-el="container">
+            <div class="article-card__media" data-el="container"><img class="article-card__img" src="assets/img/blog-card-4.webp" width="410" height="200" alt="" loading="lazy" decoding="async" data-el="image"></div>
+            <div class="article-card__body" data-el="container">
+              <div class="article-card__meta" data-el="container">
+                <p class="pill pill--neutral" data-el="text">Sustainability Initiatives</p>
+                <time class="article-card__date type-caption" datetime="2026-11-12" data-el="text">November 12, 2026</time>
+              </div>
+              <h3 class="article-card__title type-h4" data-el="heading"><a href="#">Greener Business Practices: A Necessity for Modern Companies</a></h3>
+              <p class="article-card__excerpt type-small" data-el="text">Understanding the importance of sustainable practices and how they influence brand loyalty and market success.</p>
+              <a class="btn btn--ghost article-card__link" href="#" tabindex="-1" aria-hidden="true" data-el="button">Explore Solutions</a>
+            </div>
+          </article>
+          <article class="article-card" data-el="container">
+            <div class="article-card__media" data-el="container"><img class="article-card__img" src="assets/img/blog-card-5.webp" width="410" height="200" alt="" loading="lazy" decoding="async" data-el="image"></div>
+            <div class="article-card__body" data-el="container">
+              <div class="article-card__meta" data-el="container">
+                <p class="pill pill--neutral" data-el="text">Financial Forecasts</p>
+                <time class="article-card__date type-caption" datetime="2026-12-01" data-el="text">December 1, 2026</time>
+              </div>
+              <h3 class="article-card__title type-h4" data-el="heading"><a href="#">Predicting Economic Trends for 2027</a></h3>
+              <p class="article-card__excerpt type-small" data-el="text">A comprehensive look at upcoming economic indicators and their implications for businesses in the coming year.</p>
+              <a class="btn btn--ghost article-card__link" href="#" tabindex="-1" aria-hidden="true" data-el="button">Read Insights</a>
+            </div>
+          </article>
+          <article class="article-card" data-el="container">
+            <div class="article-card__media" data-el="container"><img class="article-card__img" src="assets/img/blog-card-6.webp" width="410" height="200" alt="" loading="lazy" decoding="async" data-el="image"></div>
+            <div class="article-card__body" data-el="container">
+              <div class="article-card__meta" data-el="container">
+                <p class="pill pill--neutral" data-el="text">Digital Transformation</p>
+                <time class="article-card__date type-caption" datetime="2027-01-20" data-el="text">January 20, 2027</time>
+              </div>
+              <h3 class="article-card__title type-h4" data-el="heading"><a href="#">Navigating the Challenges of Digital Change</a></h3>
+              <p class="article-card__excerpt type-small" data-el="text">Examining the strategies companies can implement to successfully adapt to digital advancements and remain competitive.</p>
+              <a class="btn btn--ghost article-card__link" href="#" tabindex="-1" aria-hidden="true" data-el="button">Find Out How</a>
+            </div>
+          </article>
+        </div>
+        <nav class="pagination" aria-label="Blog pages" data-el="nav">
+          <ol class="pagination__list">
+            <li><span class="pagination__item pagination__item--disabled pagination__arrow pagination__arrow--prev" aria-hidden="true"></span></li>
+            <li><a class="pagination__item pagination__item--current" href="#" aria-current="page">1</a></li>
+            <li><a class="pagination__item" href="#">2</a></li>
+            <li><a class="pagination__item" href="#">3</a></li>
+            <li><span class="pagination__item pagination__item--gap" aria-hidden="true">…</span></li>
+            <li><a class="pagination__item" href="#">8</a></li>
+            <li><a class="pagination__item pagination__arrow" href="#" aria-label="Next page"></a></li>
+          </ol>
+          <p class="pagination__summary type-caption">Page 1 of 8 · 45 articles</p>
+        </nav>
+      </div>
+    </section>
+
+    <!-- section: page-cta (CTA в подвале, тёмный вариант — footer 6055:5103, компонент Footer cta=true) -->
+    <section class="page-cta page-cta--dark" data-el="container" data-name="page-cta">
+      <div class="page-cta__card page-cta__card--dark" data-el="container">
+        <div class="page-cta__content page-cta__content--dark" data-el="container">
+          <h2 class="page-cta__title page-cta__title--dark type-h2" data-el="heading">Open a <span class="page-cta__accent--dark">live</span> account</h2>
+          <p class="page-cta__text page-cta__text--dark type-body" data-el="text">Clear trading conditions · MetaTrader 5 · WhatsApp support</p>
+        </div>
+        <a class="btn btn--primary btn--lg page-cta__action" href="https://portal.g2ggroup.com/en/register" data-el="button" data-event="click_open_account" data-placement="final">Open Account</a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Подвал (Figma 6816:8376: тёмная CTA — секция page-cta--dark, подвал продолжает её без скругления) -->
+  <footer class="site-footer site-footer--flush" data-el="footer" data-name="site-footer">
+    <div class="site-footer__inner container" data-el="container">
+      <div class="site-footer__top" data-el="container">
+        <div class="site-footer__brand" data-el="container">
+          <a class="site-footer__logo" href="#" data-el="image">
+            <img class="site-footer__logo-img" src="assets/img/logo.svg" width="122" height="31" alt="G2G" loading="lazy">
+          </a>
+          <p class="site-footer__about type-small" data-el="text">G2G GROUP LIMITED is a financial markets broker providing clients with access to available global markets, backed by more than 20 years of combined industry experience.</p>
+          <ul class="site-footer__contacts type-small">
+            <li><a class="site-footer__contact-link" href="tel:+447723448083">+44 7723 448083</a></li>
+            <li><a class="site-footer__contact-link" href="mailto:info@g2ggroup.com">info@g2ggroup.com</a> · <a class="site-footer__contact-link" href="mailto:support@g2ggroup.com">support@g2ggroup.com</a></li>
+            <li>Head Office — Saint Lucia · Back Office — Cyprus</li>
+          </ul>
+        </div>
+
+        <nav class="site-footer__col" aria-label="Trade" data-el="nav">
+          <p class="site-footer__heading type-overline">Trade</p>
+          <ul class="site-footer__links">
+            <li><a class="site-footer__link" href="#">Markets</a></li>
+            <li><a class="site-footer__link" href="#">Platform</a></li>
+            <li><a class="site-footer__link" href="#">Funding</a></li>
+          </ul>
+        </nav>
+        <nav class="site-footer__col" aria-label="Accounts" data-el="nav">
+          <p class="site-footer__heading type-overline">Accounts</p>
+          <ul class="site-footer__links">
+            <li><a class="site-footer__link" href="#">Accounts</a></li>
+            <li><a class="site-footer__link" href="https://portal.g2ggroup.com/en/register" data-event="click_open_account" data-placement="footer">Open Account</a></li>
+            <li><a class="site-footer__link" href="https://portal.g2ggroup.com/en/login" data-event="click_login" data-placement="footer">Log in</a></li>
+          </ul>
+        </nav>
+        <nav class="site-footer__col" aria-label="Company" data-el="nav">
+          <p class="site-footer__heading type-overline">Company</p>
+          <ul class="site-footer__links">
+            <li><a class="site-footer__link" href="#">About</a></li>
+            <li><a class="site-footer__link" href="#">Regulation</a></li>
+            <li><a class="site-footer__link" href="#">Help</a></li>
+          </ul>
+        </nav>
+        <nav class="site-footer__col" aria-label="Legal" data-el="nav">
+          <p class="site-footer__heading type-overline">Legal</p>
+          <ul class="site-footer__links">
+            <li><a class="site-footer__link" href="#">Terms and Conditions</a></li>
+            <li><a class="site-footer__link" href="#">Privacy Policy</a></li>
+            <li><a class="site-footer__link" href="#">Order Execution Policy</a></li>
+            <li><a class="site-footer__link" href="#">Security of Funds Policy</a></li>
+            <li><a class="site-footer__link" href="#">Anti-Money Laundering Policy</a></li>
+            <li><a class="site-footer__link" href="#">Complaints Handling Policy</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <ul class="site-footer__secondary" data-el="nav">
+        <li><a class="site-footer__secondary-link" href="https://portal.g2ggroup.com/en/login" data-event="click_login" data-placement="footer">Log in</a></li>
+        <li><a class="site-footer__secondary-link" href="#" data-event="click_demo" data-placement="footer">Demo</a></li>
+        <li><a class="site-footer__secondary-link" href="#">Become a Partner</a></li>
+        <li><a class="site-footer__secondary-link" href="#">Regulation</a></li>
+        <li><a class="site-footer__secondary-link" href="#">Help</a></li>
+        <li><a class="site-footer__secondary-link" href="#">Blog</a></li>
+      </ul>
+
+      <div class="site-footer__risk" data-el="container">
+        <p class="site-footer__risk-text type-caption" data-el="text">Risk warning. Trading forex, metals, energies, indices and crypto CFDs carries a high level of risk and may not be suitable for all investors. You can lose more than your initial deposit. Past performance is not indicative of future results. Seek independent advice if necessary.</p>
+        <p class="site-footer__risk-note type-caption" data-el="text">Restricted countries. G2G Group LTD does not offer services to residents of the United States, Canada, Japan, and other restricted jurisdictions listed in the Terms &amp; Conditions.</p>
+      </div>
+
+      <div class="site-footer__bottom" data-el="container">
+        <p class="site-footer__legal type-caption" data-el="text">G2G GROUP LIMITED · Registration number 2024-00120</p>
+        <p class="site-footer__copy type-caption" data-el="text">© 2026 G2G. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- WhatsApp FAB (6008:155): закреплена, свёрнута, сама не раскрывается -->
+  <a class="whatsapp-fab" href="https://wa.me/447723448083" target="_blank" rel="noopener" data-el="button" data-event="click_whatsapp">Chat on WhatsApp</a>
+
+</body>
+</html>
