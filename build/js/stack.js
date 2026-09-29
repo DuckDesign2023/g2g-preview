@@ -1,14 +1,18 @@
 /* G2G — наезд секций со скруглённым верхом (29.09, просьба клиента: сдержанная анимация).
    Секция со скруглённым верхом не уезжает при прокрутке вместе с предыдущей, а наезжает на неё:
-   предыдущая доходит низом до низа экрана и останавливается (position: sticky), следующая
+   предыдущая проезжает чуть выше низа экрана и останавливается (position: sticky), следующая
    поднимается поверх, остановившаяся уходит в тень по мере того, как её закрывают.
 
    Как устроено:
    - пара «нижняя + верхняя» оборачивается в div.stack. Обёртка ограничивает липкость: когда
      верхняя секция кончилась, нижняя уезжает вместе с ней, а не висит под всей страницей;
-   - нижняя получает sticky и top = min(0, 100svh − её высота) (--stack-h, держит ResizeObserver):
-     короткая останавливается верхом у верха экрана, высокая — низом у низа. Ни одна строка
-     не уходит под верхнюю непрочитанной, длина страницы не меняется;
+   - нижняя получает sticky и top = min(0, 100svh − её высота − запас) (--stack-h, держит ResizeObserver):
+     высокая останавливается не у низа экрана, а выше на «запас», короткая — верхом у верха. Ни одна
+     строка не уходит под верхнюю непрочитанной, длина страницы не меняется;
+   - запас (правка пользователя 29.09: «выезжают раньше, чем нужно, — закрывают CTA у стыка»):
+     не меньше четверти экрана, а если у низа нижней секции есть кнопка или ссылка-стрелка —
+     столько, чтобы к остановке она доехала до середины экрана (--stack-cta — от низа секции
+     до низа последней кнопки; формула в base.css, «Наезд секций»);
    - тень — div.stack__shade внутри нижней: непрозрачность = доля её видимой части, которую уже
      закрыла верхняя (t^1.6 × SHADE_MAX); пересчёт — раз в кадр прокрутки;
    - подвал наезжает на всю <main> (обёртка не нужна — липкость main ограничивает body).
@@ -44,14 +48,23 @@
   });
   if (!pairs.length) return;
 
-  // Высота нижней → top. Класс ставится после первого замера: без --stack-h top был бы 0,
-  // и высокая секция остановилась бы верхом, пряча свой низ.
-  var ro = new ResizeObserver(function (entries) {
-    entries.forEach(function (entry) {
-      var el = entry.target;
-      el.style.setProperty('--stack-h', el.offsetHeight + 'px');
-      el.classList.add('stack-under');
+  // Высота нижней и место её последней кнопки → top. Класс ставится после первого замера:
+  // без --stack-h top был бы 0, и высокая секция остановилась бы верхом, пряча свой низ.
+  var CTA = '.btn, .link-arrow';
+  function measure(el) {
+    var box = el.getBoundingClientRect();
+    var lowest = -Infinity;
+    el.querySelectorAll(CTA).forEach(function (b) {
+      var r = b.getBoundingClientRect();
+      if (r.height && r.bottom > lowest) lowest = r.bottom; // скрытые на этой ширине (height 0) — мимо
     });
+    el.style.setProperty('--stack-h', el.offsetHeight + 'px');
+    if (lowest > -Infinity) el.style.setProperty('--stack-cta', Math.round(box.bottom - lowest) + 'px');
+    else el.style.removeProperty('--stack-cta');
+    el.classList.add('stack-under');
+  }
+  var ro = new ResizeObserver(function (entries) {
+    entries.forEach(function (entry) { measure(entry.target); });
     schedule();
   });
   pairs.forEach(function (p) { ro.observe(p.under); });
@@ -77,17 +90,19 @@
   }
   function frame() {
     ticking = false;
-    var vh = window.innerHeight;
     // сначала все замеры, потом все записи — без принудительных перерасчётов раскладки
     var t = pairs.map(function (p) {
       var under = p.under.getBoundingClientRect();
       var covered = under.bottom - p.cover.getBoundingClientRect().top; // сколько нижней уже под верхней
-      var visible = Math.min(under.height, vh);
-      return Math.min(Math.max(covered / visible, 0), 1);
+      var visible = under.bottom - Math.max(under.top, 0); // видимая часть остановившейся (над запасом)
+      return visible > 0 ? Math.min(Math.max(covered / visible, 0), 1) : 1;
     });
     pairs.forEach(function (p, i) { paint(p, t[i]); });
   }
 
   window.addEventListener('scroll', schedule, { passive: true });
-  window.addEventListener('resize', schedule);
+  window.addEventListener('resize', function () {
+    pairs.forEach(function (p) { measure(p.under); }); // кнопка могла переехать без смены высоты секции
+    schedule();
+  });
 })();

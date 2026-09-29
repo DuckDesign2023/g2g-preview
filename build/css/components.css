@@ -703,6 +703,17 @@
   width: 536px;
   height: auto;
   pointer-events: none;
+  animation: hero-art-float 9s ease-in-out infinite alternate;
+}
+/* CUSTOM-CSS: «парение» арта (фидбек клиента 23.09, решение пользователя 29.09) — ритм глобуса главной
+   (9 с туда-обратно, 12px). Вниз, а не вверх: низ арта срезан героем (overflow: hidden), при подъёме
+   над краем героя показался бы срез картинки. */
+@keyframes hero-art-float {
+  from { translate: 0 0; }
+  to { translate: 0 var(--hero-float, 12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-hero__art { animation: none; }
 }
 
 /* Хлебные крошки (Breadcrumb 6013:295): Home серым, путь раздела — мятой.
@@ -749,6 +760,7 @@
   .page-hero__copy { max-width: none; }
   .page-hero__actions { align-self: stretch; }
   .page-hero__art {
+    --hero-float: 8px; /* арт 240 вместо 536 — амплитуда меньше */
     right: -24px;
     width: 240px;
   }
