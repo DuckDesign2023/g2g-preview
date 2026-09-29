@@ -26,13 +26,28 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Мобильное меню ──────────────────────────────────────────
   if (!burger || !drawer) return;
 
+  // Очередь появления пунктов (CSS: transition-delay от --i); кнопки — последним шагом
+  const steps = drawer.querySelectorAll('.site-header__drawer-menu > li, .site-header__drawer-actions');
+  steps.forEach((el, i) => el.style.setProperty('--i', i));
+
+  // Открытие и закрытие анимированы (components.css): hidden снимается до класса is-open,
+  // чтобы переход стартовал с opacity 0, и ставится обратно, когда панель догасла.
+  let hideTimer = 0;
   const setOpen = (open) => {
     burger.setAttribute('aria-expanded', String(open));
     burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     burger.classList.toggle('site-header__burger--open', open);
     header.classList.toggle('site-header--menu-open', open);
     document.body.classList.toggle('page--locked', open);
-    drawer.hidden = !open;
+    clearTimeout(hideTimer);
+    if (open) {
+      drawer.hidden = false;
+      drawer.getBoundingClientRect(); // зафиксировать стартовый кадр
+      drawer.classList.add('is-open');
+    } else {
+      drawer.classList.remove('is-open');
+      hideTimer = setTimeout(() => { drawer.hidden = true; }, 200);
+    }
     syncSolid();
     if (open) {
       const first = drawer.querySelector('a');

@@ -183,6 +183,29 @@ button { font: inherit; color: inherit; }
   overflow: hidden;
 }
 
+/* ── Наезд секций (js/stack.js, 29.09) ──────────────────────────
+   Секция со скруглённым верхом наезжает на предыдущую: та останавливается (sticky) и уходит
+   в тень. Классы и обёртку .stack ставит скрипт; без него — обычная прокрутка.
+   CUSTOM-CSS: в Elementor — контейнер-обёртка пары, у нижней секции этот sticky. */
+.stack-under {
+  position: sticky;
+  /* короткая останавливается верхом у верха экрана, высокая — низом у низа (svh: низ при
+     развёрнутой панели браузера на телефоне, иначе последние строки уйдут под верхнюю) */
+  top: min(0px, calc(100vh - var(--stack-h)));
+  top: min(0px, calc(100svh - var(--stack-h)));
+}
+.stack-cover { position: relative; } /* поверх липкой: позиционированная и позже в DOM */
+.stack__shade {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 9;
+  height: min(100%, 100vh); /* видимая часть — нижний экран секции; слой не во всю <main> */
+  height: min(100%, 100lvh);
+  background-color: var(--color-surface-dark);
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* ── Доступность ─────────────────────────────────────────────── */
 .visually-hidden {
   position: absolute !important;

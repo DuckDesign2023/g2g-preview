@@ -324,6 +324,30 @@
   pointer-events: auto;
 }
 .site-header__drawer[hidden] { display: none; }
+/* Открытие (js/header.js, 29.09): панель проявляется, пункты поднимаются по очереди (--i ставит
+   скрипт), кнопки — последним шагом. Закрытие — одно короткое затухание, без очереди. */
+.site-header__drawer {
+  opacity: 0;
+  transition: opacity 180ms ease-in;
+}
+.site-header__drawer:not(.is-open) { pointer-events: none; } /* пока гаснет — не ловит касания */
+.site-header__drawer.is-open {
+  opacity: 1;
+  transition: opacity 260ms var(--ease-out);
+}
+.site-header__drawer-menu > li,
+.site-header__drawer-actions {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 150ms ease-in, transform 0s linear 150ms;
+}
+.site-header__drawer.is-open .site-header__drawer-menu > li,
+.site-header__drawer.is-open .site-header__drawer-actions {
+  opacity: 1;
+  transform: none;
+  transition: opacity 380ms var(--ease-out) calc(60ms + var(--i, 0) * 35ms),
+    transform 560ms var(--ease-out) calc(60ms + var(--i, 0) * 35ms);
+}
 .site-header__drawer-menu {
   display: flex;
   flex-direction: column;
@@ -758,7 +782,11 @@
   padding-bottom: var(--space-24);
   border-bottom: 0;
 }
-/* Иконка — на самом <details>: + (красный) → × (серый) по состоянию open */
+/* Иконка — на самом <details>: + (красный) → × (серый) по состоянию open.
+   «×» — тот же «+», повёрнутый на 45° (29.09: клиент просил, чтобы крестик крутился), scale 1.2 —
+   до размера close.svg из Figma (плечо 14 → диагональ 12). Состояние: без JS — [open], с JS
+   (js/faq.js, класс faq-item--js) — is-open: ставится по клику сразу, [open] при закрытии
+   снимается только в конце анимации высоты. */
 .faq-item::after {
   content: "";
   position: absolute;
@@ -770,11 +798,11 @@
   -webkit-mask: url('../assets/icons/plus.svg') center / contain no-repeat;
   mask: url('../assets/icons/plus.svg') center / contain no-repeat;
   pointer-events: none;
+  transition: transform 450ms var(--ease-out), background-color var(--dur-base) ease;
 }
-.faq-item[open]::after {
+.faq-item:is([open]:not(.faq-item--js), .is-open)::after {
   background-color: var(--color-text-on-light-muted);
-  -webkit-mask-image: url('../assets/icons/close.svg');
-  mask-image: url('../assets/icons/close.svg');
+  transform: rotate(45deg) scale(1.2);
 }
 .faq-item__question {
   display: block;
@@ -1424,8 +1452,10 @@
   border: var(--border-width) solid var(--color-border-on-light);
   border-radius: var(--radius-md);
   background-color: var(--color-faq-card);
+  transition: background-color var(--dur-base) ease, border-color var(--dur-base) ease;
 }
-.faq-item--card[open] {
+/* состояние — как у светлого FAQ: [open] без JS, is-open с js/faq.js */
+.faq-item--card:is([open]:not(.faq-item--js), .is-open) {
   border-color: transparent;
   background-color: var(--color-faq-card-open);
 }
@@ -1435,12 +1465,9 @@
   background-color: var(--color-accent);
   -webkit-mask-image: url('../assets/icons/chevron-down-24.svg');
   mask-image: url('../assets/icons/chevron-down-24.svg');
-  transition: transform var(--dur-fast) ease;
 }
-.faq-item--card[open]::after {
+.faq-item--card:is([open]:not(.faq-item--js), .is-open)::after {
   background-color: var(--color-accent);
-  -webkit-mask-image: url('../assets/icons/chevron-down-24.svg');
-  mask-image: url('../assets/icons/chevron-down-24.svg');
   transform: rotate(180deg);
 }
 
