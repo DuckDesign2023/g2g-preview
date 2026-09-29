@@ -703,10 +703,10 @@
   width: 536px;
   height: auto;
   pointer-events: none;
-  animation: hero-art-float 9s ease-in-out infinite alternate;
+  animation: hero-art-float 4s ease-in-out infinite alternate;
 }
-/* CUSTOM-CSS: «парение» арта (фидбек клиента 23.09, решение пользователя 29.09) — ритм глобуса главной
-   (9 с туда-обратно, 12px). Вниз, а не вверх: низ арта срезан героем (overflow: hidden), при подъёме
+/* CUSTOM-CSS: «парение» арта (фидбек клиента 23.09, решение пользователя 29.09) — 4 с в одну сторону, 12px.
+   Сначала был ритм глобуса главной (9 с) — пользователь: «почти не видно» (~1,3 px/с глаз не ловит). Вниз, а не вверх: низ арта срезан героем (overflow: hidden), при подъёме
    над краем героя показался бы срез картинки. */
 @keyframes hero-art-float {
   from { translate: 0 0; }
