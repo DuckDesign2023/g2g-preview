@@ -43,6 +43,9 @@ a { color: inherit; }
 .type-body { font: 400 var(--fs-body)/1.5 var(--font-main); letter-spacing: 0; }
 .type-fact { font: 600 var(--fs-body)/1.5 var(--font-main); letter-spacing: 0; text-transform: uppercase; }
 .type-nav { font: 400 var(--fs-body)/1.5 var(--font-main); letter-spacing: 0; text-transform: uppercase; }
+.type-note { font: 400 0.9375rem/1.4 var(--font-main); letter-spacing: -0.01em; }
+.type-fact-s { font: 600 0.875rem/1.5 var(--font-main); letter-spacing: 0.02em; text-transform: uppercase; }
+.type-chip { font: 500 0.8125rem/1.4 var(--font-main); letter-spacing: 0; }
 
 /* ── Кнопки (Theme Style → Buttons + варианты) ────────────────────── */
 .btn {
@@ -59,7 +62,7 @@ a { color: inherit; }
   text-decoration: none;
   transition: background-color 0.2s, border-color 0.2s;
 }
-.btn__icon { flex: none; width: 1.5rem; height: 1.5rem; }
+.btn__icon { flex: none; width: 1.25rem; height: 1.25rem; }
 
 .btn--primary { background: var(--color-red); color: var(--color-white); }
 .btn--primary:hover { background: var(--color-red-hover); }
@@ -70,6 +73,24 @@ a { color: inherit; }
 .btn--whatsapp { background: var(--color-whatsapp); color: var(--color-white); }
 .btn--whatsapp:hover { background: var(--color-whatsapp-hover); }
 .btn--sm { height: 2.75rem; padding: 0.75rem 1.5rem; font-size: var(--fs-nav-btn); line-height: 1; letter-spacing: 0; }
+
+/* Круглая вторичная кнопка WhatsApp рядом с главной CTA (герой, финальная CTA): меньше главной (ТЗ Block 1.3),
+   при наведении — цвет WhatsApp. Elementor: Icon, View Framed, Shape Circle, Hover → фон #25D366 */
+.btn-round {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--color-white-50);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-white);
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.btn-round:hover { background: var(--color-whatsapp); border-color: var(--color-whatsapp); }
+.btn-round__icon { width: 1.25rem; height: 1.25rem; }
 
 /* ── Шапка секции (надзаголовок + H2) ─────────────────────────────── */
 .section-head {
@@ -82,7 +103,7 @@ a { color: inherit; }
   text-align: center;
 }
 .section-head--wide { max-width: none; }
-.section-head__eyebrow { color: var(--color-grey-400); }
+.section-head__eyebrow { color: var(--color-grey-600); }          /* #9E9E9E давал 2.67:1 на белом → 5.1:1 */
 .section-head__eyebrow--on-dark { color: var(--color-white-70); }
 .section-head__title { color: var(--color-ink); }
 .section-head__title--on-dark { color: var(--color-white); }
@@ -170,7 +191,10 @@ a { color: inherit; }
 .hero__title { color: var(--color-white); }
 .hero__title-accent { color: var(--color-mint); }
 .hero__lead { max-width: 35rem; color: var(--color-white-80); }
-.hero__actions { display: flex; column-gap: 0.75rem; }
+.hero__cta { display: flex; flex-direction: column; align-items: flex-start; row-gap: 0.75rem; }
+.hero__actions { display: flex; align-items: center; column-gap: 0.75rem; }
+.hero__note { color: var(--color-white-70); }
+.hero__facts { margin-top: 0.5rem; color: var(--color-white-80); }
 
 .trustbar {
   position: relative;
@@ -308,6 +332,13 @@ a { color: inherit; }
 /* CUSTOM-CSS: активный шаг красит плашку номера */
 .step.is-active .step__num { background: var(--color-red); border-color: var(--color-red); }
 .step__title { color: var(--color-white); }
+.step__methods { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.step__method {
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--color-white-20);
+  border-radius: 999px;
+  color: var(--color-white-80);
+}
 .step__desc { color: var(--color-white-70); }
 
 .steps-media { position: relative; width: 100%; aspect-ratio: 21 / 9; }
@@ -338,7 +369,7 @@ a { color: inherit; }
   margin-inline: auto;
   padding: var(--section-y) var(--pad-x);
 }
-.plans__title-accent { color: var(--color-mint); }
+.plans__title-accent { color: var(--color-mint-deep); }        /* мята на белом 2.24:1 → тёмная мята, как акценты Why и Trust */
 .plans__panel {
   display: flex;
   justify-content: center;
@@ -374,7 +405,7 @@ a { color: inherit; }
   overflow: hidden;
   background: url('../assets/img/switching-over.webp') center / cover;
 }
-.plan-card__eyebrow { color: var(--color-grey-400); }
+.plan-card__eyebrow { color: var(--color-grey-600); }
 .plan-card__eyebrow--on-art { color: var(--color-rose); }
 .plan-card__title { margin: 1.25rem 0 0.625rem; color: var(--color-ink); }   /* отступы h3 Webflow */
 .plan-card__title--on-art { color: var(--color-white); }
@@ -389,6 +420,8 @@ a { color: inherit; }
   background: var(--color-grey-600);
 }
 .plan-card__item--strong { color: var(--color-ink); font-weight: 500; }
+.plan-card__link { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; transition: color 0.2s; }
+.plan-card__link:hover { color: var(--color-ink); }
 .plan-card__item--strong::before { background: var(--color-red); }
 
 /* ═══ trust (сравнение + FAQ) ════════════════════════════════════════ */
@@ -500,13 +533,9 @@ a { color: inherit; }
   padding: 1.5rem;
   border: 1px solid var(--color-grey-800);
   background: var(--color-white-5);
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
-.product-tile:hover { background: var(--color-white-10); }
 .product-tile--first { border-top-left-radius: var(--r-card); }
 .product-tile--last { margin-right: 0; border-top-right-radius: var(--r-card); }
-.product-tile.is-active { background: var(--color-red); }
 .product-tile__icon {
   display: flex;
   padding: 0.75rem;
@@ -515,15 +544,12 @@ a { color: inherit; }
   background: var(--color-white-10);
   color: var(--color-white);
 }
-/* CUSTOM-CSS: активная плитка меняет плашку иконки */
-.product-tile.is-active .product-tile__icon { border-color: var(--color-white); background: var(--color-white); color: var(--color-ink); }
 .product-tile__name { color: var(--color-white); }
 
 .products__account {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  column-gap: 2rem;
   padding: 2.75rem;
   border: 1px solid var(--color-grey-800);
   border-radius: 0 0 var(--r-card) var(--r-card);
@@ -531,16 +557,6 @@ a { color: inherit; }
 }
 .products__account-name { display: flex; align-items: center; column-gap: 0.5rem; flex: none; color: var(--color-white); }
 .products__account-mark { flex: none; width: 1.25rem; height: 1.25rem; color: var(--color-mint); }
-.products__notes { display: grid; flex: 1 1 0; min-width: 0; }
-.products__note {                           /* CUSTOM-CSS: описания в одной ячейке, видно активное */
-  grid-area: 1 / 1;
-  color: var(--color-grey-400);
-  text-align: right;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.2s, visibility 0.2s;
-}
-.products__note.is-active { opacity: 1; visibility: visible; }
 
 .swap {
   display: flex;
@@ -632,7 +648,7 @@ a { color: inherit; }
 .final-cta__title { max-width: 30rem; color: var(--color-white); }
 .final-cta__title-accent { color: var(--color-mint); }
 .final-cta__note { color: var(--color-grey-200); }
-.final-cta__actions { position: relative; z-index: 1; display: flex; column-gap: 0.75rem; flex: none; }
+.final-cta__actions { position: relative; z-index: 1; display: flex; align-items: center; column-gap: 0.75rem; flex: none; }
 
 .site-footer__cols {
   display: grid;
@@ -763,9 +779,7 @@ a { color: inherit; }
   .faq-item { padding-block: 0 1.5rem; }
   .faq-item:last-child { padding-bottom: 0; }
 
-  .products__account { flex-direction: column; align-items: flex-start; row-gap: 1rem; padding: 2rem; }
-  .products__notes { width: 100%; }
-  .products__note { text-align: left; }
+  .products__account { padding: 2rem; }
   .swap { padding: 2rem; }
   .swap__text { max-width: none; }
 
@@ -786,14 +800,15 @@ a { color: inherit; }
   .hero { min-height: 0; }
   .hero__inner { order: 1; padding-bottom: 0; }
   .hero__content { padding-top: 6.5rem; }
-  .hero__actions { flex-direction: column; align-items: stretch; row-gap: 0.75rem; }
+  .hero__cta { align-items: stretch; }
+  .hero__actions { width: 100%; column-gap: 0.5rem; }
   .hero__art {                              /* ноутбук под кнопками, заходит под них тёмным верхом */
     position: relative;
     order: 2;
     align-self: flex-end;
     width: 120%;
     height: auto;
-    margin-top: -4.5rem;
+    margin-top: -2.5rem;
     object-fit: fill;
   }
   .trustbar { order: 3; margin-top: 0; padding: 1rem var(--pad-x); gap: 0.5rem 1rem; }
@@ -831,14 +846,14 @@ a { color: inherit; }
     padding-block: 1rem;
   }
   .product-tile--last { border-radius: 0; }
-  .products__account { align-items: center; text-align: center; }
-  .products__note { text-align: center; }
+  .products__account { padding: 1.5rem 1rem; text-align: center; }
   .swap { padding: 1.5rem; }
 
   .support__panel { padding: 3rem 1.5rem; }
 
-  .final-cta { padding: 2.5rem 1.5rem; }
-  .final-cta__actions { flex-direction: column; align-items: stretch; row-gap: 0.75rem; width: 100%; }
+  .final-cta { padding: 2.5rem 1rem; }
+  .final-cta__actions { width: 100%; column-gap: 0.5rem; }
+  .btn--full-m { flex: 1 1 0; min-width: 0; padding-inline: 0.75rem; font-size: 0.9375rem; }   /* главная тянется, круглая WhatsApp рядом — в один ряд от 360 px */
   .site-footer__cols { grid-template-columns: minmax(0, 1fr); row-gap: 2rem; }
   .site-footer__brand { grid-row: auto; padding-right: 0; }
   .site-footer__nav { flex-wrap: wrap; row-gap: 1.5rem; justify-self: start; max-width: none; }
