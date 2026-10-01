@@ -449,6 +449,13 @@
 .final-cta {
   padding: var(--section-pad-lg) var(--inset-gutter);
 }
+/* Главная (макет 9079:8633, 01.10): к подвалу фон уходит в мяту (Rectangle 4815, 9079:9378). Секция заходит
+   под скруглённый верх подвала на его радиус (.site-footer--tuck) — мята видна в углах подвала, как в макете */
+.final-cta--mint {
+  padding-bottom: calc(var(--section-pad-lg) + var(--radius-section));
+  background-image: var(--gradient-mint-bottom);
+}
+.site-footer--tuck { margin-top: calc(var(--radius-section) * -1); }
 .final-cta__panel {
   position: relative;
   isolation: isolate;
@@ -770,6 +777,12 @@
    Главная: список 800, заголовок → список 80. Внутренние страницы (--page):
    список 1000, отступ 40, секция 96/96, без кнопки. */
 .faq { padding-block: var(--section-pad) 0; }
+/* Главная (макет 9079:9364, 01.10): мятный верх после тёмной секции — Rectangle 4815, полоса 240px */
+.faq--mint-top {
+  background-image: var(--gradient-mint-top);
+  background-size: 100% 240px;
+  background-repeat: no-repeat;
+}
 .faq__inner {
   display: flex;
   flex-direction: column;
@@ -1232,7 +1245,9 @@
   right: 0;
   height: 936px;
   border-radius: inherit;
-  background: url('../assets/img/footer-cta-glow.svg') center top / 1440px 936px no-repeat;
+  /* ширина — не меньше макета, но во всю секцию: при фиксированных 1440 на экранах шире по бокам
+     был виден вертикальный обрез свечения (замечание пользователя 01.10). SVG тянется (preserveAspectRatio none) */
+  background: url('../assets/img/footer-cta-glow.svg') center top / max(1440px, 100%) 936px no-repeat;
   pointer-events: none;
 }
 .page-cta__card--dark {
@@ -1240,7 +1255,9 @@
   flex-direction: row;
   align-items: center;
   gap: var(--space-44);
-  max-width: none;
+  /* По сетке, шире контента на 2% (решение пользователя 01.10; в макете 1360 = +6%). Раньше ограничения
+     не было — на экранах шире 1440 панель растягивалась на всю ширину минус поля 40. */
+  max-width: calc(var(--content-width) * 1.02);
   padding: calc(var(--space-40) - var(--border-width));
   background-image: var(--gradient-glass-dark);
   text-align: left;
