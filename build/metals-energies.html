@@ -33,14 +33,32 @@
       </a>
 
       <nav class="site-header__nav" aria-label="Main" data-el="nav">
+        <!-- Выпадающие меню Markets и Conditions — наше решение (макетов нет): состав и подписи — из свёрстанных
+             страниц. Пункт остаётся ссылкой, меню открывает наведение или кнопка-шеврон (js/header.js) -->
         <ul class="site-header__menu">
-          <li><a class="site-header__link site-header__link--sub site-header__link--active" href="markets.html">Markets</a></li>
-          <li><a class="site-header__link" href="#">Accounts</a></li>
-          <li><a class="site-header__link" href="#">Platform</a></li>
-          <li><a class="site-header__link" href="#">Funding</a></li>
-          <li><a class="site-header__link" href="#">Business</a></li>
-          <li><a class="site-header__link site-header__link--sub" href="#">Conditions</a></li>
-          <li><a class="site-header__link" href="#">Blog</a></li>
+          <li class="site-header__item site-header__item--sub site-header__item--active">
+            <a class="site-header__link" href="markets.html">Markets</a>
+            <button class="site-header__sub-toggle" type="button" aria-expanded="false" aria-controls="site-sub-markets" aria-label="Markets menu"></button>
+            <div class="site-header__sub" id="site-sub-markets">
+              <!-- repeat: sub-link (title, note, href) -->
+              <ul class="site-header__sub-list">
+                <li><a class="site-header__sub-link" href="forex.html"><span class="site-header__sub-title">Forex</span><span class="site-header__sub-note">FX majors and crosses</span></a></li>
+                <li><a class="site-header__sub-link site-header__sub-link--current" href="metals-energies.html" aria-current="page"><span class="site-header__sub-title">Metals &amp; Energies</span><span class="site-header__sub-note">Gold, silver, US Oil, Brent Oil</span></a></li>
+                <li><a class="site-header__sub-link" href="indices.html"><span class="site-header__sub-title">Indices</span><span class="site-header__sub-note">US100, US500, US30, DAX40</span></a></li>
+                <li><a class="site-header__sub-link" href="crypto.html"><span class="site-header__sub-title">Crypto</span><span class="site-header__sub-note">Bitcoin, Ethereum and other crypto/USD</span></a></li>
+                <li><a class="site-header__sub-link" href="stocks.html"><span class="site-header__sub-title">Stocks</span><span class="site-header__sub-note">Stock CFDs, as available</span></a></li>
+                <li class="site-header__sub-more"><a class="site-header__sub-link" href="markets.html"><span class="site-header__sub-title">All Markets</span></a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="site-header__item"><a class="site-header__link" href="#">Accounts</a></li>
+          <li class="site-header__item"><a class="site-header__link" href="#">Platform</a></li>
+          <li class="site-header__item"><a class="site-header__link" href="#">Funding</a></li>
+          <li class="site-header__item"><a class="site-header__link" href="#">Business</a></li>
+          <li class="site-header__item">
+            <a class="site-header__link" href="#">Conditions</a>
+          </li>
+          <li class="site-header__item"><a class="site-header__link" href="#">Blog</a></li>
         </ul>
       </nav>
 
@@ -55,13 +73,31 @@
     <div class="site-header__drawer" id="site-drawer" hidden>
       <nav aria-label="Mobile" data-el="nav">
         <ul class="site-header__drawer-menu">
-          <li><a class="site-header__drawer-link" href="markets.html">Markets</a></li>
-          <li><a class="site-header__drawer-link" href="#">Accounts</a></li>
-          <li><a class="site-header__drawer-link" href="#">Platform</a></li>
-          <li><a class="site-header__drawer-link" href="#">Funding</a></li>
-          <li><a class="site-header__drawer-link" href="#">Business</a></li>
-          <li><a class="site-header__drawer-link" href="#">Conditions</a></li>
-          <li><a class="site-header__drawer-link" href="#">Blog</a></li>
+          <li class="site-header__drawer-item">
+            <div class="site-header__drawer-row" data-el="container">
+              <a class="site-header__drawer-link" href="markets.html">Markets</a>
+              <button class="site-header__drawer-toggle" type="button" aria-expanded="false" aria-controls="site-drawer-markets" aria-label="Markets menu"></button>
+            </div>
+            <div class="site-header__drawer-sub" id="site-drawer-markets">
+              <ul class="site-header__drawer-sub-list">
+                <li><a class="site-header__drawer-sub-link" href="forex.html">Forex</a></li>
+                <li><a class="site-header__drawer-sub-link site-header__drawer-sub-link--current" href="metals-energies.html" aria-current="page">Metals &amp; Energies</a></li>
+                <li><a class="site-header__drawer-sub-link" href="indices.html">Indices</a></li>
+                <li><a class="site-header__drawer-sub-link" href="crypto.html">Crypto</a></li>
+                <li><a class="site-header__drawer-sub-link" href="stocks.html">Stocks</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="site-header__drawer-item"><a class="site-header__drawer-link" href="#">Accounts</a></li>
+          <li class="site-header__drawer-item"><a class="site-header__drawer-link" href="#">Platform</a></li>
+          <li class="site-header__drawer-item"><a class="site-header__drawer-link" href="#">Funding</a></li>
+          <li class="site-header__drawer-item"><a class="site-header__drawer-link" href="#">Business</a></li>
+          <li class="site-header__drawer-item">
+            <div class="site-header__drawer-row" data-el="container">
+              <a class="site-header__drawer-link" href="#">Conditions</a>
+            </div>
+          </li>
+          <li class="site-header__drawer-item"><a class="site-header__drawer-link" href="#">Blog</a></li>
         </ul>
       </nav>
       <div class="site-header__drawer-actions" data-el="container">

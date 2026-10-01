@@ -1,4 +1,4 @@
-/* G2G — шапка: Transparent → Solid после прокрутки, мобильное меню (≤1024).
+/* G2G — шапка: Transparent → Solid после прокрутки, выпадающие меню, мобильное меню (≤1024).
    Молча ничего не делает, если шапки нет на странице. */
 document.addEventListener('DOMContentLoaded', () => {
   const header = document.querySelector('.site-header');
@@ -23,12 +23,78 @@ document.addEventListener('DOMContentLoaded', () => {
   syncSolid();
   window.addEventListener('scroll', syncSolid, { passive: true });
 
+  // ── Выпадающие меню (Markets, Conditions) ───────────────────
+  // Пункт остаётся ссылкой. Меню открывают наведение мыши (с короткой задержкой: не мигает, когда курсор
+  // идёт мимо, и не закрывается на пути к нему) и кнопка-шеврон — клик, тап, клавиатура. Открытое кнопкой
+  // держится, пока его не закроют: Escape, клик мимо, уход фокуса, другое меню.
+  const OPEN_DELAY = 70;
+  const CLOSE_DELAY = 180;
+  const subs = [...header.querySelectorAll('.site-header__item--sub')]
+    .map((item) => ({ item, toggle: item.querySelector('.site-header__sub-toggle'), pinned: false, timer: 0 }))
+    .filter((sub) => sub.toggle);
+  const isOpen = (sub) => sub.item.classList.contains('site-header__item--open');
+  const setSub = (sub, open, pinned = false) => {
+    clearTimeout(sub.timer);
+    if (open) subs.forEach((other) => { if (other !== sub) setSub(other, false); });
+    sub.pinned = open && pinned;
+    sub.item.classList.toggle('site-header__item--open', open);
+    sub.toggle.setAttribute('aria-expanded', String(open));
+  };
+
+  subs.forEach((sub) => {
+    sub.item.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      clearTimeout(sub.timer);
+      if (!isOpen(sub)) sub.timer = setTimeout(() => setSub(sub, true), OPEN_DELAY);
+    });
+    sub.item.addEventListener('pointerleave', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      clearTimeout(sub.timer);
+      if (isOpen(sub) && !sub.pinned) sub.timer = setTimeout(() => setSub(sub, false), CLOSE_DELAY);
+    });
+    sub.toggle.addEventListener('click', () => {
+      // уже открыто наведением — клик закрепляет меню, а не закрывает его под курсором
+      if (isOpen(sub) && !sub.pinned) sub.pinned = true;
+      else setSub(sub, !isOpen(sub), true);
+    });
+    sub.item.addEventListener('focusout', (e) => {
+      if (!sub.item.contains(e.relatedTarget)) setSub(sub, false);
+    });
+  });
+
+  if (subs.length) {
+    document.addEventListener('click', (e) => {
+      subs.forEach((sub) => { if (isOpen(sub) && !sub.item.contains(e.target)) setSub(sub, false); });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const open = subs.find(isOpen);
+      if (!open) return;
+      const focusInside = open.item.contains(document.activeElement);
+      setSub(open, false);
+      if (focusInside) open.toggle.focus();
+    });
+  }
+
   // ── Мобильное меню ──────────────────────────────────────────
   if (!burger || !drawer) return;
 
   // Очередь появления пунктов (CSS: transition-delay от --i); кнопки — последним шагом
-  const steps = drawer.querySelectorAll('.site-header__drawer-menu > li, .site-header__drawer-actions');
+  const steps = drawer.querySelectorAll('.site-header__drawer-item, .site-header__drawer-actions');
   steps.forEach((el, i) => el.style.setProperty('--i', i));
+
+  // Подразделы Markets и Conditions: кнопка-шеврон раскрывает список; раздел текущей страницы раскрыт сразу
+  drawer.querySelectorAll('.site-header__drawer-toggle').forEach((btn) => {
+    const list = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!list) return;
+    const setList = (open) => {
+      btn.setAttribute('aria-expanded', String(open));
+      btn.classList.toggle('site-header__drawer-toggle--open', open);
+      list.classList.toggle('site-header__drawer-sub--open', open);
+    };
+    if (list.querySelector('[aria-current="page"]')) setList(true);
+    btn.addEventListener('click', () => setList(btn.getAttribute('aria-expanded') !== 'true'));
+  });
 
   // Открытие и закрытие анимированы (components.css): hidden снимается до класса is-open,
   // чтобы переход стартовал с opacity 0, и ставится обратно, когда панель догасла.

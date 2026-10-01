@@ -249,30 +249,141 @@
 }
 .site-header__logo-img { width: 100%; height: auto; }
 
+/* Пункты на всю высоту панели: выпадающее меню встаёт от её нижнего края (top: 100%) */
+.site-header__nav { align-self: stretch; }
 .site-header__menu {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: var(--space-24);
+  height: 100%;
+}
+/* Состояние пункта → вид ссылки, шеврона и меню: модификатор задаёт переменные, дети их берут */
+.site-header__item {
+  --nav-fg: var(--color-text);
+  --sub-opacity: 0;
+  --sub-visibility: hidden;
+  --sub-shift: -6px;
+  --sub-dur: 140ms;
+  --sub-ease: ease-in;
+  --sub-hide-delay: 140ms;
+  --sub-chevron-turn: 0deg;
+  --sub-chevron-alpha: 0.6;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.site-header__item--active { --nav-fg: var(--color-accent); } /* раздел текущей страницы (Markets на страницах рынков) */
+.site-header__item--open {
+  --nav-fg: var(--color-accent);
+  --sub-opacity: 1;
+  --sub-visibility: visible;
+  --sub-shift: 0px;
+  --sub-dur: 220ms;
+  --sub-ease: var(--ease-out);
+  --sub-hide-delay: 0s;
+  --sub-chevron-turn: 180deg;
+  --sub-chevron-alpha: 1;
 }
 .site-header__link {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
   padding-block: var(--space-12);
   font-size: var(--fs-nav);
   line-height: var(--lh-nav);
   font-weight: var(--fw-nav);
-  color: var(--color-text);
+  color: var(--nav-fg);
   transition: color var(--dur-fast) ease;
 }
-.site-header__link--active { color: var(--color-accent); } /* раздел текущей страницы (Markets на страницах рынков) */
-.site-header__link--sub::after {
+
+/* Кнопка-шеврон: знак 10px (в макете 16 — уменьшен по правке пользователя 01.10), зона нажатия 24×32 */
+.site-header__sub-toggle {
+  position: relative;
+  flex: none;
+  width: 24px;
+  height: 32px;
+  margin-inline: -1px -7px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: none;
+  color: var(--nav-fg);
+  cursor: pointer;
+  transition: color var(--dur-fast) ease;
+}
+.site-header__sub-toggle:focus-visible { outline-offset: -2px; } /* кольцо внутри кнопки — не задевает текст пункта */
+.site-header__sub-toggle::before {
   content: "";
-  width: 16px;
-  height: 16px;
+  position: absolute;
+  inset: 1px 0 0; /* на 1px ниже середины строки — по оптическому центру строчных */
+  width: 10px;
+  height: 10px;
+  margin: auto;
   background-color: currentColor;
-  -webkit-mask: url('../assets/icons/chevron-down.svg') center / contain no-repeat;
-  mask: url('../assets/icons/chevron-down.svg') center / contain no-repeat;
+  -webkit-mask: url('../assets/icons/chevron-down-10.svg') center / contain no-repeat;
+  mask: url('../assets/icons/chevron-down-10.svg') center / contain no-repeat;
+  opacity: var(--sub-chevron-alpha);
+  transform: rotate(var(--sub-chevron-turn));
+  transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-fast) ease;
+}
+
+/* Выпадающее меню — наше решение (макетов нет). Фон глухой: размытие внутри размытой панели шапки
+   не работает (вложенный backdrop-filter). Тексты пунктов стоят на одной вертикали с текстом пункта шапки. */
+.site-header__sub {
+  position: absolute;
+  top: calc(100% + var(--space-8));
+  left: calc((var(--space-8) + var(--space-12) + var(--border-width)) * -1);
+  width: 300px;
+  padding: var(--space-8);
+  border: var(--border-width) solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-elevated);
+  box-shadow: var(--shadow-card);
+  opacity: var(--sub-opacity);
+  visibility: var(--sub-visibility);
+  transform: translateY(var(--sub-shift));
+  transition: opacity var(--sub-dur) var(--sub-ease), transform var(--sub-dur) var(--sub-ease),
+    visibility 0s linear var(--sub-hide-delay);
+}
+/* CUSTOM-CSS: «мостик» над меню — курсор не теряет пункт, проходя зазор между шапкой и меню */
+.site-header__sub::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--space-12) * -1) 0 auto;
+  height: var(--space-12);
+}
+.site-header__sub-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.site-header__sub-link {
+  --sub-title: var(--color-text);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px var(--space-12);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--dur-fast) ease;
+}
+.site-header__sub-link:focus-visible { outline-offset: 0; } /* кольцо фокуса не заходит на соседние пункты */
+.site-header__sub-link--current { --sub-title: var(--color-accent); } /* текущая страница */
+.site-header__sub-title {
+  font-size: var(--fs-nav);
+  line-height: var(--lh-nav);
+  font-weight: var(--fw-nav);
+  color: var(--sub-title);
+  transition: color var(--dur-fast) ease;
+}
+.site-header__sub-note {
+  font-size: var(--fs-caption);
+  line-height: var(--lh-caption);
+  color: var(--color-text-secondary);
+}
+/* «All Markets» — обзорная страница, отделена линией от списка рынков */
+.site-header__sub-more {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: var(--border-width) solid var(--color-border-subtle);
 }
 
 .site-header__actions {
@@ -335,13 +446,13 @@
   opacity: 1;
   transition: opacity 260ms var(--ease-out);
 }
-.site-header__drawer-menu > li,
+.site-header__drawer-item,
 .site-header__drawer-actions {
   opacity: 0;
   transform: translateY(12px);
   transition: opacity 150ms ease-in, transform 0s linear 150ms;
 }
-.site-header__drawer.is-open .site-header__drawer-menu > li,
+.site-header__drawer.is-open .site-header__drawer-item,
 .site-header__drawer.is-open .site-header__drawer-actions {
   opacity: 1;
   transform: none;
@@ -352,15 +463,81 @@
   display: flex;
   flex-direction: column;
 }
+.site-header__drawer-item { border-bottom: var(--border-width) solid var(--color-border-subtle); }
+.site-header__drawer-row {
+  display: flex;
+  align-items: center;
+}
 .site-header__drawer-link {
   display: block;
+  flex: 1 1 auto;
   padding-block: var(--space-16);
-  border-bottom: var(--border-width) solid var(--color-border-subtle);
   font-size: var(--fs-h4);
   line-height: var(--lh-h4);
   font-weight: var(--fw-h4);
   color: var(--color-text);
 }
+/* Подразделы Markets и Conditions: ссылка ведёт на раздел, кнопка-шеврон (зона 44×44) раскрывает список.
+   Высота — через grid 0fr → 1fr; скрытый список не ловит фокус (visibility) */
+.site-header__drawer-toggle {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin-right: calc(var(--space-16) * -1); /* знак — по правому краю линии пункта */
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.site-header__drawer-toggle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 12px;
+  height: 12px;
+  margin: auto;
+  background-color: currentColor;
+  -webkit-mask: url('../assets/icons/chevron-down-10.svg') center / contain no-repeat;
+  mask: url('../assets/icons/chevron-down-10.svg') center / contain no-repeat;
+  opacity: 0.6;
+  transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-fast) ease;
+}
+.site-header__drawer-toggle--open::before {
+  opacity: 1;
+  transform: rotate(180deg);
+}
+.site-header__drawer-sub {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 220ms ease-in, visibility 0s linear 220ms;
+}
+.site-header__drawer-sub--open {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 320ms var(--ease-out), visibility 0s;
+}
+.site-header__drawer-sub-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.site-header__drawer-sub-list::after { /* отступ под списком: поле у самого списка не схлопнулось бы в 0fr */
+  content: "";
+  flex: none;
+  height: var(--space-8);
+}
+.site-header__drawer-sub-link {
+  display: block;
+  padding: 10px 0 10px var(--space-16);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-secondary);
+}
+.site-header__drawer-sub-link--current { color: var(--color-accent); } /* текущая страница */
 .site-header__drawer-actions {
   display: flex;
   flex-direction: column;
@@ -368,8 +545,13 @@
 }
 
 @media (hover: hover) {
-  .site-header__link:hover,
-  .site-header__drawer-link:hover { color: var(--color-accent); }
+  .site-header__item:hover { --nav-fg: var(--color-accent); } /* и пока курсор в выпадающем меню пункта */
+  .site-header__sub-link:hover {
+    --sub-title: var(--color-accent);
+    background-color: var(--color-surface-overlay);
+  }
+  .site-header__drawer-link:hover,
+  .site-header__drawer-sub-link:hover { color: var(--color-accent); }
 }
 
 @media (max-width: 1024px) {
