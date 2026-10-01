@@ -58,8 +58,17 @@
           <li class="site-header__item site-header__item--active"><a class="site-header__link" href="#" aria-current="page">Platform</a></li>
           <li class="site-header__item"><a class="site-header__link" href="#">Funding</a></li>
           <li class="site-header__item"><a class="site-header__link" href="#">Business</a></li>
-          <li class="site-header__item">
+          <li class="site-header__item site-header__item--sub">
             <a class="site-header__link" href="#">Conditions</a>
+            <button class="site-header__sub-toggle" type="button" aria-expanded="false" aria-controls="site-sub-conditions" aria-label="Conditions menu"></button>
+            <div class="site-header__sub" id="site-sub-conditions">
+              <ul class="site-header__sub-list">
+                <li><a class="site-header__sub-link" href="#"><span class="site-header__sub-title">Trading Conditions</span><span class="site-header__sub-note">Leverage, spreads, commission, swap</span></a></li>
+                <li><a class="site-header__sub-link" href="#"><span class="site-header__sub-title">Deposits &amp; Withdrawals</span><span class="site-header__sub-note">Fees, minimum amount, processing times</span></a></li>
+                <li><a class="site-header__sub-link" href="#"><span class="site-header__sub-title">Regulation</span><span class="site-header__sub-note">Company registration and licensing status</span></a></li>
+                <li><a class="site-header__sub-link" href="#"><span class="site-header__sub-title">Legal Documents</span><span class="site-header__sub-note">Policies and terms</span></a></li>
+              </ul>
+            </div>
           </li>
           <li class="site-header__item"><a class="site-header__link" href="#">Blog</a></li>
         </ul>
@@ -98,6 +107,15 @@
           <li class="site-header__drawer-item">
             <div class="site-header__drawer-row" data-el="container">
               <a class="site-header__drawer-link" href="#">Conditions</a>
+              <button class="site-header__drawer-toggle" type="button" aria-expanded="false" aria-controls="site-drawer-conditions" aria-label="Conditions menu"></button>
+            </div>
+            <div class="site-header__drawer-sub" id="site-drawer-conditions">
+              <ul class="site-header__drawer-sub-list">
+                <li><a class="site-header__drawer-sub-link" href="#">Trading Conditions</a></li>
+                <li><a class="site-header__drawer-sub-link" href="#">Deposits &amp; Withdrawals</a></li>
+                <li><a class="site-header__drawer-sub-link" href="#">Regulation</a></li>
+                <li><a class="site-header__drawer-sub-link" href="#">Legal Documents</a></li>
+              </ul>
             </div>
           </li>
           <li class="site-header__drawer-item"><a class="site-header__drawer-link" href="#">Blog</a></li>
