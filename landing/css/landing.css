@@ -102,7 +102,7 @@ a { color: inherit; }
   text-align: center;
 }
 .section-head--wide { max-width: none; }
-.section-head__eyebrow { color: var(--color-grey-600); }          /* #9E9E9E давал 2.67:1 на белом → 5.1:1 */
+.section-head__eyebrow { color: var(--color-grey-400); }
 .section-head__eyebrow--on-dark { color: var(--color-white-70); }
 .section-head__title { color: var(--color-ink); }
 .section-head__title--on-dark { color: var(--color-white); }
@@ -367,7 +367,7 @@ a { color: inherit; }
   margin-inline: auto;
   padding: var(--section-y) var(--pad-x);
 }
-.plans__title-accent { color: var(--color-mint-deep); }        /* мята на белом 2.24:1 → тёмная мята, как акценты Why и Trust */
+.plans__title-accent { color: var(--color-mint); }
 .plans__panel {
   display: flex;
   justify-content: center;
@@ -403,7 +403,7 @@ a { color: inherit; }
   overflow: hidden;
   background: url('../assets/img/switching-over.webp') center / cover;
 }
-.plan-card__eyebrow { color: var(--color-grey-600); }
+.plan-card__eyebrow { color: var(--color-grey-400); }
 .plan-card__eyebrow--on-art { color: var(--color-rose); }
 .plan-card__title { margin: 1.25rem 0 0.625rem; color: var(--color-ink); }   /* отступы h3 Webflow */
 .plan-card__title--on-art { color: var(--color-white); }

@@ -27,7 +27,7 @@
   --color-hero: #000407;             /* подложка героя */
   --color-mint: #2BC48B;             /* acent-green: акцент заголовков, цифры, галочки */
   --color-mint-deep: #00615B;        /* green-black: вторая строка заголовков на белом */
-  --color-red: #D9323E;              /* primary-500 #E53945, затемнён до AA: белый текст 4.55:1 (как --color-cta многостраничника), 30.09 */
+  --color-red: #E53945;              /* primary-500: главная кнопка, активные элементы */
   --color-red-hover: #C4181B;        /* hover главной кнопки */
   --color-rose: #FEECEC;             /* primary-50: надзаголовок на арте */
   --color-whatsapp: #25D366;         /* кнопки WhatsApp (цвет мессенджера) */
