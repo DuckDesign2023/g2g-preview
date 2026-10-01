@@ -138,6 +138,8 @@
   --color-globe-marker: #FFFFFF;    /* точка ЦБ */
   --color-quote-card: #0C1918;      /* Watchlist Card 7046:9471 — фон (сырой цвет в Figma) */
   --color-quote-down: #FF5F56;      /* Watchlist Card — падение (сырой в Figma; 6.0:1 на фоне карточки) */
+  --color-strip-wash: rgb(255 255 255 / 0.015); /* полоса фактов героя — подложка как в HTML клиента (правка 01.10) */
+  --color-link-hot: var(--color-down);  /* ховер плитки рынка: ссылка со стрелкой — Basic Red текстом на тёмном (Card / Market Tile, hover=yes) */
 
   /* ── Сторонние цвета (не бренд) ──────────────────────────── */
   --color-whatsapp: var(--color-accent);   /* фидбек 23.09: «фирменный зелёный брендбука» */
@@ -193,6 +195,13 @@
     #FFFFFF calc(100% + 3px + var(--fade-shift)));
   /* Карточка «Who it is for» (16 Business, Partnership 6828:9728) */
   --gradient-partner-card: linear-gradient(59.45deg, #042420 4.575%, #108A7C 118.79%);
+  /* Мятные фоны главной (макет 9079:8633, 01.10 — Rectangle 4815). Один цвет, меняется только альфа */
+  /* верх светлой секции после тёмной (Audiences, FAQ): 30% → 0 на 63% полосы 240px */
+  --gradient-mint-top: linear-gradient(180deg, rgb(43 196 139 / 0.30) 0%, rgb(43 196 139 / 0) 63%);
+  /* Why G2G: полоса во всю секцию с пиком 20% посередине */
+  --gradient-mint-band: linear-gradient(180deg, rgb(43 196 139 / 0) 0%, rgb(43 196 139 / 0.20) 50%, rgb(43 196 139 / 0) 100%);
+  /* низ finalCTA перед подвалом: 30% на 15px ниже края секции → 0 на 230px выше (в Figma — 389px от y 8821 вверх) */
+  --gradient-mint-bottom: linear-gradient(0deg, rgb(43 196 139 / 0.30) -15px, rgb(43 196 139 / 0) 230px);
   /* Брендбук с. 16 — Linear Gradient 45° */
   --gradient-brand: linear-gradient(45deg, var(--color-accent-deep), var(--color-accent));
 
@@ -288,9 +297,11 @@
   /* ── Движение (кривые из Figma, HANDOFF) ─────────────────── */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);      /* появление */
   --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1); /* «выскакивание» кнопки */
+  --ease-in-out-back: cubic-bezier(0.7, -0.4, 0.4, 1.4); /* Figma «Ease in and out back» — ховер плиток рынков (Smart animate) */
   --dur-fast: 150ms;
   --dur-base: 250ms;
   --dur-reveal: 700ms;
+  --dur-tile: 600ms;            /* ховер плитки рынка (прототип Figma: 0.6 s) */
 
   /* ── Слои ────────────────────────────────────────────────── */
   --z-header: 100;

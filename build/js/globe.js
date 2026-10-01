@@ -54,7 +54,7 @@
   var W = 0, H = 0, R = 0, cx = 0, cy = 0, dpr = 1, scale = 1;
   var grid = null, dotsData = null, pts = null, colors = null;
   var buckets = [];
-  var cardW = 0, cardH = 0, maxCards = 4, safeTop = 0;
+  var cardW = 0, cardH = 0, maxCards = 4, safeTop = 0, safeLeft = 0, safeBottom = 0, safeRight = 0;
   var theta = THETA0, inertia = 0;
   var visible = true, userPaused = false, dragging = false;
   var raf = 0, last = 0, slowFrames = 0, frameSkip = false, skipOdd = false;
@@ -148,6 +148,7 @@
     b.chgEl = el.querySelector('.globe-card__change');
     b.poolIndex = -1;
     b.shown = 0; b.slot = 0; b.px = null; b.py = 0; b.angle = 0;
+    b.vis = 0; b.room = 1; b.roomTarget = 1; b.side = null; // место под карточку — placeCards()
     // текст для замера размеров карточки (resize); показ начнётся с первого инструмента пула
     b.symEl.textContent = Q.instruments[b.pool[0]].label;
     b.priceEl.textContent = Q.format(b.pool[0], Q.get(b.pool[0]).price);
@@ -235,7 +236,12 @@
       b.want = slotTarget;
       b.slot += (slotTarget - b.slot) * (dt ? fade : 1);
       if (b.slot < 0.01 && !slotTarget) b.slot = 0;
-      var shown = Math.min(b.reveal, b.slot);
+      // карточка, которой не нашлось места без наезда на другие, гаснет (roomTarget ставит placeCards)
+      b.vis = Math.min(b.reveal, b.slot);
+      if (b.vis <= 0) { b.room = 1; b.roomTarget = 1; b.side = null; }
+      b.room += (b.roomTarget - b.room) * (dt ? fade : 1);
+      if (b.room < 0.01 && !b.roomTarget) b.room = 0;
+      var shown = Math.min(b.vis, b.room);
       if (shown > 0.02 && b.shown <= 0.02) nextInstrument(b); // новое появление — следующий инструмент пула
       b.shown = shown;
     }
@@ -279,11 +285,11 @@
   function placeCards(dt) {
     shift = root.getAttribute('data-stack') === 'column' ? 0 : Math.round(cardW * 0.14); // 28 / 23 px
     // гаснущие по лимиту карточек в раскладке не участвуют — тают на своём месте
-    var list = BANKS.filter(function (b) { return b.shown > 0 && b.want; });
-    var minX = PAD + cardW / 2, maxX = W - PAD - cardW / 2;
+    var list = BANKS.filter(function (b) { return b.vis > 0 && b.want; });
+    var minX = safeLeft + cardW / 2, maxX = W - safeRight - cardW / 2;
     list.forEach(function (b) {
       b.bx = Math.min(maxX, Math.max(minX, b.mx));
-      b.by = Math.min(H - PAD, Math.max(safeTop + cardH, b.my - GAP));
+      b.by = Math.min(H - safeBottom, Math.max(safeTop + cardH, b.my - GAP));
       b.group = b;
     });
     function find(b) { while (b.group !== b) b = b.group = b.group.group; return b; }
@@ -334,12 +340,12 @@
       }
       var spot = tries.filter(function (t) {
         var end = t[0] + t.dir * run;
-        return Math.min(t[0], end) >= minX && Math.max(t[0], end) <= maxX && t[1] >= safeTop && t[1] + total <= H - PAD;
+        return Math.min(t[0], end) >= minX && Math.max(t[0], end) <= maxX && t[1] >= safeTop && t[1] + total <= H - safeBottom;
       })[0];
       if (spot) spots[key] = spot;
       var x = spot ? spot[0] : tries[0][0];
       var dir = spot ? spot.dir : tries[0].dir;
-      var top = spot ? spot[1] : Math.min(H - PAD - total, Math.max(safeTop, my - total / 2));
+      var top = spot ? spot[1] : Math.min(H - safeBottom - total, Math.max(safeTop, my - total / 2));
       g.forEach(function (b, n) {
         b.tx = Math.min(maxX, Math.max(minX, x + dir * n * shift));
         b.ty = top + n * step + cardH;
@@ -347,22 +353,49 @@
       });
     });
 
-    // второй проход: одиночная карточка, задевшая столбик или другую карточку, отъезжает по вертикали
-    // в сторону своего маркера
-    for (var pass = 0; pass < 2; pass++) {
-      for (i = 0; i < list.length; i++) {
-        for (j = 0; j < list.length; j++) {
-          var a = list[i], o = list[j];
-          if (a === o || groups[find(a).code].length > 1) continue;
-          if (Math.abs(a.tx - o.tx) >= cardW + 6 || Math.abs(a.ty - o.ty) >= cardH + 6) continue;
-          var down = a.my >= o.ty - cardH / 2;
-          var ty = down ? o.ty + cardH + STACK : o.ty - cardH - STACK;
-          if (ty > H - PAD || ty - cardH < safeTop) ty = down ? o.ty - cardH - STACK : o.ty + cardH + STACK;
-          a.ty = Math.min(H - PAD, Math.max(safeTop + cardH, ty));
-          a.ta = 0;
-        }
+    // Второй проход: карточки не наезжают друг на друга (правка 01.10). Столбики стоят, где встали; гаснущие
+    // карточки тают на своём месте — это занятые места. Одиночная карточка (ближние к зрителю — первыми) берёт
+    // свободное место: над маркером, под ним, сбоку от него или вплотную к мешающей карточке — ближайшее к
+    // маркеру; прежнее место держится, пока годится (без скачков). Свободного места нет — карточка гаснет.
+    var taken = [];
+    list.forEach(function (b) { if (groups[find(b).code].length > 1) taken.push({ x: b.tx, y: b.ty }); });
+    BANKS.forEach(function (b) {
+      if (list.indexOf(b) < 0 && b.shown > 0.15 && b.px !== null) taken.push({ x: b.px, y: b.py });
+    });
+    function isFree(x, y) {
+      if (x < minX || x > maxX || y - cardH < safeTop || y > H - safeBottom) return false;
+      for (var n = 0; n < taken.length; n++) {
+        if (Math.abs(x - taken[n].x) < cardW + 6 && Math.abs(y - taken[n].y) < cardH + 6) return false;
       }
+      return true;
     }
+    var aside = 24 + cardW / 2;
+    list.filter(function (b) { return groups[find(b).code].length === 1; })
+      .sort(function (a, z) { return z.d - a.d; })
+      .forEach(function (b) {
+        var opts = [
+          ['A', b.bx, b.by], ['B', b.bx, b.my + GAP + cardH],
+          ['R', b.mx + aside, b.my + cardH / 2], ['L', b.mx - aside, b.my + cardH / 2],
+          ['R-', b.mx + aside, b.my - GAP], ['L-', b.mx - aside, b.my - GAP],
+          ['R+', b.mx + aside, b.my + GAP + cardH], ['L+', b.mx - aside, b.my + GAP + cardH]
+        ];
+        taken.forEach(function (o, n) {
+          opts.push(['a' + n, b.bx, o.y - cardH - STACK], ['b' + n, b.bx, o.y + cardH + STACK],
+            ['r' + n, o.x + cardW + STACK, b.by], ['l' + n, o.x - cardW - STACK, b.by]);
+        });
+        var best = null, bestCost = Infinity;
+        opts.forEach(function (o) {
+          if (!isFree(o[1], o[2])) return;
+          // расстояние от маркера до центра карточки; место над маркером и прежнее место — в приоритете
+          var cost = Math.hypot(o[1] - b.mx, o[2] - cardH / 2 - b.my) - (o[0] === 'A' ? 120 : 0) - (o[0] === b.side ? 80 : 0);
+          if (cost < bestCost) { bestCost = cost; best = o; }
+        });
+        if (!best) { b.roomTarget = 0; return; }
+        b.roomTarget = 1;
+        b.side = best[0];
+        if (best[0] !== 'A') { b.tx = best[1]; b.ty = best[2]; b.ta = 0; }
+        taken.push({ x: b.tx, y: b.ty });
+      });
 
     var follow = dt ? 1 - Math.exp(-dt / 0.1) : 1;
     var turn = dt ? 1 - Math.exp(-dt / 0.25) : 1;
@@ -442,8 +475,14 @@
     if (name !== grid) buildPoints(name);
     var first = layer.firstChild;
     cardW = first.offsetWidth; cardH = first.offsetHeight;
-    // сверху сцену перекрывает плавающая шапка (десктоп) — карточки не заезжают под неё
-    safeTop = Math.max(PAD, parseFloat(getComputedStyle(root).getPropertyValue('--globe-safe-top')) || 0);
+    // Сцена шире шара и на десктопе заходит под плавающую шапку, на текст героя, на полосу фактов и за край окна —
+    // карточки туда не заезжают. Поля задаёт CSS (--globe-safe-* → padding слоя карточек): padding отдаёт
+    // готовые px, а переменную с calc() getComputedStyle вернул бы строкой.
+    var pad = getComputedStyle(layer);
+    safeTop = Math.max(PAD, parseFloat(pad.paddingTop) || 0);
+    safeLeft = Math.max(PAD, parseFloat(pad.paddingLeft) || 0);
+    safeBottom = Math.max(PAD, parseFloat(pad.paddingBottom) || 0);
+    safeRight = Math.max(PAD, parseFloat(pad.paddingRight) || 0);
     redraw();
   }
 
@@ -545,6 +584,13 @@
         face: function (lon) { theta = -lon * Math.PI / 180; inertia = 0; redraw(); },
         pause: setPaused,
         canvas: canvas,
+        // раскладка карточек — для проверки наездов: место (центр по x, низ по y), сторона, видимость
+        state: function () {
+          return { W: W, H: H, cardW: cardW, cardH: cardH, safe: [safeTop, safeRight, safeBottom, safeLeft], cards: BANKS.map(function (b) {
+            return { code: b.code, want: b.want, shown: +b.shown.toFixed(2), room: b.roomTarget, side: b.side,
+              x: Math.round(b.tx), y: Math.round(b.ty), mx: Math.round(b.mx), my: Math.round(b.my) };
+          }) };
+        },
         poster: function (lon, px) {
           var keep = [ctx, dpr, theta];
           var out = document.createElement('canvas');
@@ -559,6 +605,8 @@
 
       started = true;
       new ResizeObserver(resize).observe(float);
+      // поля карточек зависят от ширины окна и тогда, когда размер сцены не изменился
+      window.addEventListener('resize', resize);
       resize();
       new IntersectionObserver(function (entries) {
         visible = entries[entries.length - 1].isIntersecting;

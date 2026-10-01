@@ -1,31 +1,37 @@
-/* G2G — главная (Figma 7045:11425, 01 · Home v3).
+/* G2G — главная (Figma 01 · Home v3: с 01.10 — макет 9079:8633, прежний 7045:11425; id секций ниже — прежние,
+   соответствие — в build/SECTIONS.md).
    Секции самодостаточны: у каждой свой фон и вертикальные отступы (layout-rules.md).
    Значения — из get_design_context по id секции (см. build/SECTIONS.md). */
 
 /* ════════ Hero (7045:11426) ═══════════════════════════════════
    Текст, CTA, трастбар; глобус с котировками — js/globe.js (карточки — компакт Watchlist Card 7046:9471). */
 .hero {
+  /* Правки клиента 01.10 (Trello nblAGTt7): фон — ровный Surface Dark от .theme-dark, без Mesh gradient
+     (прежние пятна Blob 6/5/4/2/3 — assets/_src/hero/hero-mesh-2026-09.css); герой — под высоту экрана,
+     как в HTML клиента: первый экран = шапка + герой + полоса фактов, шар целиком между шапкой и полосой.
+     --hero-h — высота героя; --hero-head — низ плавающей шапки (16 + 72); --hero-strip — высота полосы фактов
+     (24 + 47 + 24 и две линии по 1) */
+  --hero-h: 840px;
+  --hero-head: 88px;
+  --hero-strip: 97px;
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 840px;
+  min-height: var(--hero-h);
   overflow: hidden;
-  /* CUSTOM-CSS: Mesh gradient героя — размытые пятна Blob 6/5/4/2/3 (центры, цвета из Figma).
-     Дрейф и «парение» — позже, вместе с глобусом */
-  background-image:
-    radial-gradient(400px 380px at 36.1% 23.8%, color-mix(in srgb, var(--color-mesh-ink) 35%, transparent) 0%, color-mix(in srgb, var(--color-mesh-ink) 15%, transparent) 50%, transparent 100%),
-    radial-gradient(396px 223px at 34.8% 33.9%, color-mix(in srgb, var(--color-mesh-navy) 70%, transparent) 0%, color-mix(in srgb, var(--color-mesh-navy) 30%, transparent) 50%, transparent 100%),
-    radial-gradient(895px 312px at 51.3% 96.2%, color-mix(in srgb, var(--color-surface-dark) 90%, transparent) 0%, color-mix(in srgb, var(--color-surface-dark) 45%, transparent) 55%, transparent 100%),
-    radial-gradient(420px 370px at 92% 2.3%, color-mix(in srgb, var(--color-accent) 20%, transparent) 0%, color-mix(in srgb, var(--color-accent) 9%, transparent) 50%, transparent 100%),
-    radial-gradient(433px 389px at 55.4% 70.8%, color-mix(in srgb, var(--color-accent-deep) 42%, transparent) 0%, color-mix(in srgb, var(--color-accent-deep) 18%, transparent) 50%, transparent 100%);
+}
+@supports (height: 100svh) {
+  .hero { --hero-h: clamp(680px, 100svh, 900px); }
 }
 .hero__inner {
   position: relative;
   display: flex;
   flex: 1 1 auto;
-  align-items: flex-start;
-  padding-top: 241px;
-  padding-bottom: 57px; /* 74 в Figma минус лишняя строка лида (решение T4: 18/1.55) — трастбар остаётся на y 745 */
+  /* Текст героя — по центру свободной высоты между шапкой и полосой фактов, на одной линии с центром шара
+     (правка пользователя 01.10: «Gateway to Global не по центру»; в Figma верх текста 241 при высоте 840 —
+     на 39px ниже центра). 12px сверху — «парение» шара: центр зоны = центр шара */
+  align-items: center;
+  padding-top: calc(var(--hero-head) + 12px);
 }
 .hero__copy {
   position: relative;
@@ -34,7 +40,6 @@
   flex-direction: column;
   gap: var(--space-36);
   max-width: 576px;
-  padding-bottom: var(--space-48);
 }
 .hero__title {
   display: flex;
@@ -63,15 +68,32 @@
   gap: var(--space-16);
   padding-top: 19px;
 }
-/* Глобус 829×829 (Frame 2147224820: x 611, y 4 на 1440). До старта js/globe.js (после load) и без JS —
-   постер из Figma (image 13); живой кадр — canvas + слой карточек, постер гаснет (.is-live). */
+/* Глобус. В Figma — сцена 829×829 (Frame 2147224820: x 611, y 4 на 1440), шар 0,8 сцены = 663: верх уходил
+   под шапку, низ — на полосу фактов. Правка клиента 01.10 («обрезан сверху и снизу, размер как в HTML
+   клиента»): шар целиком между шапкой и полосой и растёт с высотой экрана, как у клиента (там диаметр
+   76,8vh, не больше 704). Центр по горизонтали — как в Figma (50% + 305,5).
+   До старта js/globe.js (после load) и без JS — постер; живой кадр — canvas + слой карточек (.is-live). */
 .hero__globe {
-  --globe-safe-top: 104px; /* шапка: 16 + 72 + зазор 12, минус top 4 — выше карточки не поднимаются (js/globe.js) */
+  /* свободная высота под шар: над ним 20 (8 + «парение» 12), под ним 8 */
+  --globe-room: calc(var(--hero-h) - var(--hero-head) - var(--hero-strip) - 28px);
+  /* диаметр: по высоте; не шире места между текстом героя и правым краем (100vw − 688 = от 656 + 16 до края − 16);
+     не больше, чем у клиента; 384 — чтобы сцена не стала уже 480 (ниже — «телефонная» сетка точек) */
+  --globe-d: max(384px, min(var(--globe-room), 100vw - 688px, 704px));
+  --globe-s: calc(var(--globe-d) * 1.25); /* сторона сцены: шар = 0,8 (RADIUS в js/globe.js) */
+  --globe-top: calc(var(--hero-head) + 20px + (var(--globe-room) - var(--globe-d)) / 2 - var(--globe-d) * 0.125);
+  /* центр шара: как в Figma; на узком десктопе шар отъезжает вправо — не на текст (текст кончается на 656) */
+  --globe-cx: max(50vw + 305.5px, 672px + var(--globe-d) / 2);
+  /* поля слоя карточек (js/globe.js читает их как padding слоя): не под шапку, не на текст героя,
+     не на полосу фактов и не за правый край окна */
+  --globe-safe-top: max(0px, var(--hero-head) + 20px - var(--globe-top));
+  --globe-safe-left: max(0px, max(656px, 50vw - 64px) + 24px - var(--globe-cx) + var(--globe-s) / 2);
+  --globe-safe-bottom: max(0px, var(--globe-top) + var(--globe-s) - var(--hero-h) + var(--hero-strip) + 8px);
+  --globe-safe-right: max(0px, var(--globe-cx) + var(--globe-s) / 2 - 100vw + 24px);
   position: absolute;
-  top: 4px;
-  left: calc(50% - 109px);
-  width: 829px;
-  height: 829px;
+  top: var(--globe-top);
+  left: calc(max(50% + 305.5px, 672px + var(--globe-d) / 2) - var(--globe-s) / 2);
+  width: var(--globe-s);
+  height: var(--globe-s);
   pointer-events: none;
 }
 .hero__globe-float {
@@ -101,6 +123,8 @@
 .hero__globe-cards {
   position: absolute;
   inset: 0;
+  /* поля для карточек — js/globe.js читает их отсюда; сами карточки стоят абсолютом и от padding не зависят */
+  padding: var(--globe-safe-top, 0px) var(--globe-safe-right, 0px) var(--globe-safe-bottom, 0px) var(--globe-safe-left, 0px);
   pointer-events: none;
 }
 /* CUSTOM-CSS: «парение» героя (фидбек 23.09) — пока только главная, на остальные герои — после согласования */
@@ -111,20 +135,9 @@
   to { translate: 0 -12px; }
 }
 
-/* Подпись под глобусом: цены — демо, не «live» (HANDOFF §1). Слева внизу от шара, вне круга: справа внизу —
-   кнопка WhatsApp. Кнопку паузы пользователь снял 28.09 (WCAG 2.2.2 — осознанно; reduced motion — статичный кадр) */
-.hero__globe-note {
-  position: absolute;
-  left: 96px;
-  top: 702px;
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-  font-size: var(--fs-caption);
-  line-height: var(--lh-caption);
-  color: var(--color-text-secondary);
-}
-.hero__globe-note[hidden] { display: none; }
+/* Подпись «Indicative prices» под глобусом снята 01.10 по решению пользователя (клиент ведёт живые котировки
+   через MT5). Разметка и стили — assets/_src/removed/globe-note/; js/globe.js без подписи работает как раньше.
+   Кнопку паузы пользователь снял 28.09 (WCAG 2.2.2 — осознанно; reduced motion — статичный кадр) */
 @media (prefers-reduced-motion: reduce) {
   .hero__globe-float { animation: none !important; }
 }
@@ -214,11 +227,16 @@
 .globe-card__change.is-down { color: var(--color-quote-down); }
 .globe-card__change.is-flat { color: var(--color-text-secondary); }
 
-/* Трастбар (Trust facts 7045:11445) */
+/* Полоса фактов. Правка клиента 01.10: вид и раскладка — как в HTML клиента (g2g-homepage2.html, .stats):
+   знак, факты и короткие разделители равномерно по ширине, подложка-вуаль, линии сверху и снизу; регистрация —
+   значок + две строки, номер лицензии — отдельным пунктом. Шрифт и кегли — наши (Web/H4, Caption, Small).
+   Цифры — по макету и фидбеку 23.09 ($120B+; «120+ Countries» клиент вычеркнул). Прежний вид (Trust facts
+   7045:11445: линии во всю высоту, регистрация и лицензия одним пунктом) — assets/_src/hero/hero-facts-2026-09.css */
 .hero__facts {
   position: relative;
   z-index: 1;
-  border-block: var(--border-width) solid var(--color-border-subtle);
+  border-block: var(--border-width) solid var(--color-border-subtle); /* снизу — правка пользователя 01.10 (у клиента только сверху) */
+  background-color: var(--color-strip-wash);
 }
 .hero__facts-inner {
   display: flex;
@@ -229,39 +247,77 @@
   flex: none;
   width: 35px;
   height: 29px;
-  margin-right: 56px; /* блок знака 91px в Figma */
+  opacity: 0.85;
 }
 .hero__facts-list {
   display: flex;
   flex: 1 1 auto;
-  align-items: stretch;
+  align-items: center;
 }
+/* Герой во весь экран: закреплённая кнопка WhatsApp (56px у правого края контейнера, 24px от низа окна)
+   на экранах ниже 980px стоит на полосе фактов — последний пункт не доходит до неё */
+@media (max-height: 979px) {
+  .hero__facts-list { padding-right: calc(var(--fab-size) + var(--space-24)); }
+}
+/* CUSTOM-CSS: свободное место делится поровну между всеми промежутками (space-between у клиента, где
+   разделители — отдельные элементы): ::before и ::after — растягивающиеся отступы перед содержимым пункта,
+   правая граница ::before — разделитель 34px. У первого пункта отступ один и без линии (после знака) */
 .hero__fact {
   display: flex;
+  flex: 2 1 auto;
+  align-items: center;
+}
+.hero__fact::before,
+.hero__fact::after {
+  content: "";
+  flex: 1 1 0;
+  height: 34px;
+}
+.hero__fact::before { border-right: var(--border-width) solid var(--color-border-subtle); }
+.hero__fact--first { flex-grow: 1; }
+.hero__fact--first::before { display: none; }
+.hero__fact-body {
+  display: flex;
+  flex: none;
   flex-direction: column;
   gap: var(--space-4);
-  padding-inline: var(--space-80);
-  border-left: var(--border-width) solid var(--color-border-subtle);
+  order: 1; /* после обоих отступов */
   white-space: nowrap;
 }
-.hero__fact--wide {
-  flex: 1 1 auto;
-  border-right: var(--border-width) solid var(--color-border-subtle);
+.hero__fact-body--row {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+.hero__fact-icon {
+  flex: none;
+  width: 18px;
+  height: 22px;
 }
 .hero__fact-value { color: var(--color-text); }
 .hero__fact-label { color: var(--color-text-secondary); }
-.hero__fact-strong { font-weight: var(--fw-bold); }
+.hero__fact-number {
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-secondary);
+}
 
 @media (max-width: 1024px) {
   .hero { min-height: 0; }
   .hero__inner {
     flex-direction: column;
+    align-items: flex-start;
     padding-top: calc(var(--header-h) + 96px);
     padding-bottom: var(--space-48);
   }
-  .hero__copy { max-width: 600px; }
+  .hero__copy {
+    max-width: 600px;
+    padding-bottom: var(--space-48);
+  }
   .hero__globe {
     --globe-safe-top: 16px; /* «парение» поднимает сцену на 12 — карточки не доходят до кнопок */
+    --globe-safe-left: 0px;
+    --globe-safe-bottom: 0px;
+    --globe-safe-right: 0px;
     position: relative;
     top: auto;
     left: auto;
@@ -280,17 +336,11 @@
     height: 560px;
   }
   .hero__globe-poster { object-fit: contain; }
-  /* под шаром: низ сцены (10%) пустой — подпись заходит в него */
-  .hero__globe-note {
-    position: relative;
-    left: auto;
-    top: auto;
-    margin-top: calc(var(--space-24) * -1);
-  }
   .hero__facts-mark { display: none; }
-  .hero__fact { padding-inline: var(--space-32); }
-  .hero__fact:first-child { padding-left: 0; border-left: 0; }
-  .hero__fact--wide { border-right: 0; }
+  .hero__facts-list { padding-right: 0; } /* герой не привязан к высоте экрана — места под WhatsApp не держим */
+  /* без знака первый пункт стоит у левого края */
+  .hero__fact--first { flex-grow: 0; }
+  .hero__fact--first::after { display: none; }
 }
 
 @media (max-width: 767px) {
@@ -304,7 +354,6 @@
     padding-top: var(--space-8);
   }
   .hero__globe-float { height: min(100vw - 2 * var(--page-gutter), 460px); } /* телефон — квадрат, 767 — шире высоты */
-  .hero__globe-note { margin-top: var(--space-4); } /* на телефоне низ сцены занят карточками */
   .globe-card {
     gap: 6px;
     width: 164px;
@@ -314,33 +363,29 @@
   .globe-card__bank { font-size: 13px; }
   .globe-card__price { font-size: 22px; }
   .globe-card__change { font-size: var(--fs-caption); }
+  /* телефон: 2 × 2 без разделителей */
   .hero__facts-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: var(--space-20);
+    gap: var(--space-20) var(--space-16);
   }
-  .hero__fact { padding-inline: var(--space-16) 0; white-space: normal; }
-  .hero__fact--wide {
-    grid-column: 1 / -1;
-    padding-left: 0;
-    padding-top: var(--space-20);
-    border-left: 0;
-    border-top: var(--border-width) solid var(--color-border-subtle);
-  }
+  .hero__fact::before,
+  .hero__fact::after { display: none; }
+  .hero__fact-body { white-space: normal; }
 }
 
 /* ════════ Markets (7045:11459) ═════════════════════════════════
    Тёмный верх плавно уходит в белый (переход уже в копии макета). */
 .markets {
   padding-block: 130px 112px;
-  /* CUSTOM-CSS: Rectangle 4804 (+ 2 радиальных свечения) и Ellipse 1 (белый, blur 200) — градиент в белый */
-  background-image:
-    radial-gradient(580px 720px at 91% 58%, color-mix(in srgb, var(--color-glow-teal) 32%, transparent) 0%, transparent 100%),
-    radial-gradient(530px 530px at -1% 98%, color-mix(in srgb, var(--color-glow-teal) 13%, transparent) 0%, transparent 100%),
-    linear-gradient(180deg,
-      var(--color-surface-dark) 40%,
-      color-mix(in srgb, var(--color-accent) 16%, var(--color-surface-light)) 73%,
-      var(--color-surface-light) 100%);
+  /* CUSTOM-CSS: фон — Rectangle 4804 (линейный + 2 радиальных свечения) и Ellipse 1 (белый, blur 200) растром,
+     посчитанным по формулам Figma (assets/_src/markets/markets_bg.py, сверка с рендером ≤ 6 уровней).
+     CSS-градиент (до 01.10) смешивал прозрачные остановки с предумножением: выходил темнее макета и внизу не
+     доходил до белого — на стыке с Why G2G была ступенька. Градиент под картинкой — на время её загрузки */
+  background-image: url('../assets/img/markets-bg.webp'),
+    linear-gradient(180deg, var(--color-surface-dark) 40%, var(--color-surface-light) 100%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 .markets__inner {
   display: flex;
@@ -350,7 +395,11 @@
 
 /* Бенто рынков (7045:11463). Card / Market Tile 6089:3655:
    hero 828×344 · small 436×164 · wide 632×200. Слои карточки (как в Figma):
-   фон + затемнение → свечения (::before/::after) → 3D-объект → текст. */
+   фон + затемнение → свечения (::before/::after) → 3D-объект → текст.
+   Наведение (макет 9079:8633, 01.10): варианты hover=yes плитки и Variant2 у Forex, прототип — Smart animate
+   0,6 с, Ease in and out back. Свечения 70% → 100%, объект растёт и сдвигается, заголовок — мятный, текст —
+   белый, ссылка со стрелкой — красная, кнопка Forex — Primary. Состояние ставит плитка переменными --tile-* и
+   --art-*, дети их берут. Плитка кликабельна целиком (в Figma наведение и клик — на всей плитке). */
 .markets__grid {
   display: flex;
   flex-direction: column;
@@ -379,6 +428,17 @@
   --art-w: 452px; --art-h: 452px; --art-right: -38px; --art-bottom: -138px;
   --copy-max: 440px;
   --card-gap: var(--space-16);
+  /* покой */
+  --tile-glow: 0.7;
+  --tile-title: var(--color-text);
+  --tile-text: var(--color-text-secondary);
+  --tile-link: var(--fg-accent);
+  --tile-btn-bg: transparent;
+  --tile-btn-border: var(--color-text);
+  --art-dx: 0%; --art-dy: 0%; --art-k: 1;
+  /* куда уходит объект при наведении — в долях его размера (не зависят от брейкпоинта).
+     Forex: Rectangle 829×353 → 996×424 от (−1; 4) к (−168; −67) = объект 452 → 543, центр −38 / −20 */
+  --art-to-dx: -8.4%; --art-to-dy: -4.5%; --art-to-k: 1.2015;
   position: relative;
   isolation: isolate;
   display: flex;
@@ -401,9 +461,10 @@
   position: absolute;
   z-index: 0;
   border-radius: 50%;
-  opacity: 0.7;
+  opacity: var(--tile-glow);
   filter: blur(50px);
   pointer-events: none;
+  transition: opacity var(--dur-tile) var(--ease-in-out-back);
 }
 .market-card::before {
   left: var(--glow-x);
@@ -430,6 +491,9 @@
   height: var(--art-h);
   max-width: none;
   pointer-events: none;
+  translate: var(--art-dx) var(--art-dy);
+  scale: var(--art-k);
+  transition: translate var(--dur-tile) var(--ease-in-out-back), scale var(--dur-tile) var(--ease-in-out-back);
 }
 .market-card__copy {
   position: relative;
@@ -439,11 +503,68 @@
   gap: var(--space-12);
   max-width: var(--copy-max);
 }
-.market-card__title { color: var(--color-text); }
-.market-card__text { color: var(--color-text-secondary); }
+.market-card__title {
+  color: var(--tile-title);
+  transition: color var(--dur-tile) var(--ease-in-out-back);
+}
+.market-card__text {
+  color: var(--tile-text);
+  transition: color var(--dur-tile) var(--ease-in-out-back);
+}
 .market-card__cta {
   position: relative;
   z-index: 2;
+}
+/* CUSTOM-CSS: невидимая область ссылки растянута с запасом и обрезается плиткой (overflow: hidden) —
+   вся плитка ведёт туда же, куда её ссылка; имя ссылки для скринридера не меняется */
+.market-card__cta::before {
+  content: "";
+  position: absolute;
+  inset: -400px -900px;
+}
+.market-card__cta--link {
+  color: var(--tile-link);
+  transition: color var(--dur-tile) var(--ease-in-out-back);
+}
+.market-card__cta--btn {
+  border-color: var(--tile-btn-border);
+  background-color: var(--tile-btn-bg);
+  transition: background-color var(--dur-tile) var(--ease-in-out-back), border-color var(--dur-tile) var(--ease-in-out-back);
+}
+@media (hover: hover) {
+  .market-card:hover {
+    --tile-glow: 1;
+    --tile-title: var(--color-accent);
+    --tile-text: var(--color-surface-light);
+    --tile-link: var(--color-link-hot);
+    --tile-btn-bg: var(--color-cta);
+    --tile-btn-border: var(--color-cta);
+    --art-dx: var(--art-to-dx); --art-dy: var(--art-to-dy); --art-k: var(--art-to-k);
+  }
+  /* у ссылки в плитке свой ховер (красный вместе с плиткой) — без подчёркивания и сдвига стрелки общей .link-arrow */
+  .market-card__cta--link:hover { text-decoration-line: none; }
+  .market-card__cta--link:hover::after { transform: none; }
+  /* кнопка Forex под курсором остаётся Primary (общий ховер .btn--outline — мятный) */
+  .market-card__cta--btn:hover {
+    border-color: var(--tile-btn-border);
+    background-color: var(--tile-btn-bg);
+    color: var(--color-text);
+  }
+}
+/* то же состояние при фокусе с клавиатуры */
+.market-card:has(.market-card__cta:focus-visible) {
+  --tile-glow: 1;
+  --tile-title: var(--color-accent);
+  --tile-text: var(--color-surface-light);
+  --tile-link: var(--color-link-hot);
+  --tile-btn-bg: var(--color-cta);
+  --tile-btn-border: var(--color-cta);
+  --art-dx: var(--art-to-dx); --art-dy: var(--art-to-dy); --art-k: var(--art-to-k);
+}
+@media (prefers-reduced-motion: reduce) {
+  .market-card::before,
+  .market-card::after,
+  .market-card__art { transition: none; }
 }
 
 .market-card--hero { min-height: 344px; }
@@ -452,6 +573,7 @@
   --glow-w: 248px; --glow-h: 56px; --glow-x: 80.8%; --glow-y: 47.6%;
   --glow2-w: 135px; --glow2-h: 22px; --glow2-x: 71.6%; --glow2-y: 63.5%;
   --art-w: 293px; --art-h: 293px; --art-right: -88px; --art-bottom: -109px;
+  --art-to-dx: -15.3%; --art-to-dy: -0.9%; --art-to-k: 1.179; /* 238 → 280,7 (с поворотом 15,6° — 293 → 346), центр −44,7 / −2,7 */
   --copy-max: none;
   flex: 1 1 0;
   justify-content: flex-start;
@@ -466,6 +588,7 @@
   --glow-w: 257px; --glow-h: 65px; --glow-x: 65.9%; --glow-y: 50.8%;
   --glow2-w: 156px; --glow2-h: 25px; --glow2-x: 55.3%; --glow2-y: 31.5%;
   --art-w: 330px; --art-h: 330px; --art-right: -2px; --art-bottom: -82px;
+  --art-to-dx: -6.5%; --art-to-dy: 2.3%; --art-to-k: 1.118; /* 330 → 369, центр −21,5 / +7,5 */
   --copy-max: 338px;
   --card-gap: var(--space-12);
   min-height: 200px;
@@ -511,8 +634,14 @@
   .market-card--metals { --art-w: 160px; --art-h: 130px; --art-right: 16px; --art-bottom: 45px; --art-gap: 92px; }
 }
 
-/* ════════ Why G2G (7045:11472) ═════════════════════════════════ */
-.why { padding-block: var(--section-pad-sm) var(--section-pad-lg); }
+/* ════════ Why G2G (7045:11472; фон и карточки — макет 9079:8697, 01.10) ═════════ */
+.why {
+  padding-block: var(--section-pad-sm) var(--section-pad-lg);
+  /* Rectangle 4815 (9079:8698): мятная полоса от верха секции на 1271 из 1391px, пик 20% посередине */
+  background-image: var(--gradient-mint-band);
+  background-size: 100% 91.4%;
+  background-repeat: no-repeat;
+}
 .why__inner {
   display: flex;
   flex-direction: column;
@@ -1046,8 +1175,12 @@
   flex-direction: column;
 }
 .fact-card {
-  --chip-bg: var(--color-accent-tint);
-  --chip-fg: var(--color-accent-deep);
+  /* макет 01.10: карточки тёмные и в покое (были белые): Surface Card, рамка Border Subtle, мятный чип */
+  --fg: var(--color-text);
+  --fg-2: var(--color-text-secondary);
+  --focus: var(--color-accent);
+  --chip-bg: var(--color-accent-tint-soft);
+  --chip-fg: var(--color-accent);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1055,23 +1188,18 @@
   gap: 14px;
   margin-bottom: -1px;
   padding: 36px var(--space-40);
-  border: var(--border-width) solid var(--line);
-  background-color: var(--card-bg);
+  border: var(--border-width) solid var(--color-border-subtle);
+  background-color: var(--color-surface-card);
   cursor: pointer;
   transition: background-color var(--dur-base) ease, border-color var(--dur-base) ease,
     box-shadow var(--dur-base) ease;
 }
 .fact-card:focus-visible { outline-offset: -4px; } /* соседи перекрывают внешний контур */
-/* Активная: тёмная, мятная рамка и свечение, красный чип (варианты Features) */
+/* Активная: светлее (Surface Card Hover), мятная рамка и свечение; чип — как у остальных (был красный) */
 .fact-card--active {
-  --fg: var(--color-text);
-  --fg-2: var(--color-text-secondary);
-  --focus: var(--color-accent);
-  --chip-bg: var(--color-cta);
-  --chip-fg: var(--color-text);
   z-index: 1;
   border-color: var(--color-border-mint);
-  background-color: var(--color-surface-dark);
+  background-color: var(--color-surface-card-hover);
   box-shadow: var(--shadow-mint-glow);
 }
 .fact-card--first { border-top-right-radius: var(--radius-section); }
@@ -1153,8 +1281,14 @@
   }
 }
 
-/* ════════ Audiences (7045:11478) ═══════════════════════════════ */
-.audiences { padding-block: var(--section-pad-lg); }
+/* ════════ Audiences (7045:11478; фон — макет 9079:8704, 01.10) ═══════════════ */
+.audiences {
+  padding-block: var(--section-pad-lg);
+  /* Rectangle 4815 (9079:8735): мятный верх после тёмной секции, полоса 240px */
+  background-image: var(--gradient-mint-top);
+  background-size: 100% 240px;
+  background-repeat: no-repeat;
+}
 .audiences__inner {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

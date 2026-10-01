@@ -148,28 +148,39 @@
           <div class="hero__globe-float" role="img" aria-label="Globe with indicative prices from eight financial centres">
             <img class="hero__globe-poster" src="assets/img/hero-globe.webp" width="829" height="829" alt="" decoding="async" data-el="image">
           </div>
-          <p class="hero__globe-note" data-globe-note hidden>
-            <span data-globe-status>Indicative prices</span>
-          </p>
         </div>
       </div>
 
+      <!-- Полоса фактов: вид и раскладка — как в HTML клиента (правка 01.10): знак, факты и короткие
+           разделители равномерно по ширине. Цифры — по макету и фидбеку 23.09 -->
       <div class="hero__facts" data-el="container">
         <div class="hero__facts-inner container" data-el="container">
           <img class="hero__facts-mark" src="assets/img/mark.svg" width="35" height="29" alt="" data-el="image">
-          <!-- repeat: trust-plate (value, label) -->
+          <!-- repeat: trust-fact (value, label) -->
           <ul class="hero__facts-list">
-            <li class="hero__fact">
-              <p class="hero__fact-value type-h4">$70M+</p>
-              <p class="hero__fact-label type-caption">Processed so far</p>
+            <li class="hero__fact hero__fact--first">
+              <div class="hero__fact-body" data-el="container">
+                <p class="hero__fact-value type-h4" data-el="text">$70M+</p>
+                <p class="hero__fact-label type-caption" data-el="text">Processed so far</p>
+              </div>
             </li>
             <li class="hero__fact">
-              <p class="hero__fact-value type-h4">$120B+</p>
-              <p class="hero__fact-label type-caption">Trading volume in 2026</p>
+              <div class="hero__fact-body" data-el="container">
+                <p class="hero__fact-value type-h4" data-el="text">$120B+</p>
+                <p class="hero__fact-label type-caption" data-el="text">Trading volume in 2026</p>
+              </div>
             </li>
-            <li class="hero__fact hero__fact--wide">
-              <p class="hero__fact-value type-h4">Registered In Saint Lucia</p>
-              <p class="hero__fact-label type-caption">License Number <strong class="hero__fact-strong">2024-00120</strong></p>
+            <li class="hero__fact">
+              <div class="hero__fact-body hero__fact-body--row" data-el="container">
+                <img class="hero__fact-icon" src="assets/icons/saint-lucia--light.svg" width="18" height="22" alt="" data-el="image">
+                <p class="hero__fact-label type-caption" data-el="text">Registered<br>In Saint Lucia</p>
+              </div>
+            </li>
+            <li class="hero__fact">
+              <div class="hero__fact-body" data-el="container">
+                <p class="hero__fact-label type-caption" data-el="text">License Number</p>
+                <p class="hero__fact-number type-small" data-el="text">2024-00120</p>
+              </div>
             </li>
           </ul>
         </div>
@@ -193,7 +204,7 @@
                 <h3 class="market-card__title type-h2" data-el="heading">Forex</h3>
                 <p class="market-card__text type-body" data-el="text">Trade available FX majors and crosses, with minimum trading volume from 0.01 lot.</p>
               </div>
-              <a class="btn btn--outline market-card__cta" href="forex.html" data-el="button">Explore Forex</a>
+              <a class="btn btn--outline market-card__cta market-card__cta--btn" href="forex.html" data-el="button">Explore Forex</a>
             </article>
 
             <div class="markets__stack" data-el="container">
@@ -203,7 +214,7 @@
                   <h3 class="market-card__title type-h3" data-el="heading">Stocks</h3>
                   <p class="market-card__text type-small" data-el="text">Access stock instruments as available through G2G.</p>
                 </div>
-                <a class="link-arrow market-card__cta" href="stocks.html" data-el="button">Explore Stocks</a>
+                <a class="link-arrow market-card__cta market-card__cta--link" href="stocks.html" data-el="button">Explore Stocks</a>
               </article>
               <article class="market-card market-card--small market-card--tinted" data-el="container">
                 <img class="market-card__art" src="assets/img/market-crypto.webp" width="293" height="293" alt="" loading="lazy" decoding="async" data-el="image">
@@ -211,7 +222,7 @@
                   <h3 class="market-card__title type-h3" data-el="heading">Crypto</h3>
                   <p class="market-card__text type-small" data-el="text">Access available cryptocurrency instruments through your G2G Individual Account.</p>
                 </div>
-                <a class="link-arrow market-card__cta" href="crypto.html" data-el="button">Explore Crypto</a>
+                <a class="link-arrow market-card__cta market-card__cta--link" href="crypto.html" data-el="button">Explore Crypto</a>
               </article>
             </div>
           </div>
@@ -223,7 +234,7 @@
                 <h3 class="market-card__title type-h3" data-el="heading">Indices</h3>
                 <p class="market-card__text type-small" data-el="text">Trade available US and European index instruments, including US100, US500, US30, and DAX40.</p>
               </div>
-              <a class="link-arrow market-card__cta" href="indices.html" data-el="button">Explore Indices</a>
+              <a class="link-arrow market-card__cta market-card__cta--link" href="indices.html" data-el="button">Explore Indices</a>
             </article>
             <article class="market-card market-card--wide market-card--metals" data-el="container">
               <img class="market-card__art" src="assets/img/market-metals.webp" width="330" height="268" alt="" loading="lazy" decoding="async" data-el="image">
@@ -231,7 +242,7 @@
                 <h3 class="market-card__title type-h3" data-el="heading">Metals &amp; Energies</h3>
                 <p class="market-card__text type-small" data-el="text">Access available precious metals and energy markets, including gold, silver, platinum, palladium, US Oil, and Brent Oil.</p>
               </div>
-              <a class="link-arrow market-card__cta" href="metals-energies.html" data-el="button">Explore Metals &amp; Energies</a>
+              <a class="link-arrow market-card__cta market-card__cta--link" href="metals-energies.html" data-el="button">Explore Metals &amp; Energies</a>
             </article>
           </div>
         </div>
@@ -387,7 +398,7 @@
           </div>
 
           <!-- repeat: fact-card (icon, title, text) — Card / Fact 6007:40, вкладка переключателя.
-               Активная — тёмная с мятным свечением (fact-card--active) -->
+               Все карточки тёмные (макет 01.10); активная — светлее, с мятной рамкой и свечением (fact-card--active) -->
           <div class="why__facts" role="tablist" aria-label="Why trade with G2G" aria-orientation="vertical" data-el="container">
             <div class="fact-card fact-card--first fact-card--active" role="tab" id="why-tab-conditions" aria-controls="why-panel-conditions" aria-selected="true" aria-labelledby="why-title-conditions" aria-describedby="why-text-conditions" tabindex="0" data-el="container">
               <div class="fact-card__chip" data-el="container">
@@ -607,7 +618,7 @@
     </section>
 
     <!-- section: faq -->
-    <section class="faq theme-light" data-el="container" data-name="faq">
+    <section class="faq faq--mint-top theme-light" data-el="container" data-name="faq">
       <div class="faq__inner container" data-el="container">
         <div class="section-head" data-el="container">
           <h2 class="section-head__title type-h2" data-el="heading">Frequently Asked Questions</h2>
@@ -657,7 +668,7 @@
     </section>
 
     <!-- section: final-cta (компонент finalCTA 6123:8218) -->
-    <section class="final-cta theme-light" data-el="container" data-name="final-cta">
+    <section class="final-cta final-cta--mint theme-light" data-el="container" data-name="final-cta">
       <div class="final-cta__panel theme-dark" data-el="container">
         <img class="final-cta__bg" src="assets/img/final-cta-bg.webp" width="1360" height="516" alt="" loading="lazy" decoding="async" data-el="image">
         <div class="final-cta__content" data-el="container">
@@ -671,7 +682,7 @@
   </main>
 
   <!-- Подвал (Figma 6918:9229, Default) -->
-  <footer class="site-footer edge-round-top" data-el="footer" data-name="site-footer">
+  <footer class="site-footer site-footer--tuck edge-round-top" data-el="footer" data-name="site-footer">
     <div class="site-footer__inner container" data-el="container">
       <div class="site-footer__top" data-el="container">
         <div class="site-footer__brand" data-el="container">
