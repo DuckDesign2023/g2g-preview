@@ -11,10 +11,16 @@
      карточку вплотную под блок (фидбек 25.09);
    - data-panels="fade" — панели не прячутся атрибутом hidden, а получают класс из data-panel-active-class:
      смену (наплыв, «сборку» визуала) рисует CSS. Неактивные панели CSS скрывает visibility —
-     они недоступны и скринридеру. */
+     они недоступны и скринридеру;
+   - data-tabs-accordion="<медиазапрос>" — пока медиазапрос выполняется (вкладки столбиком, 09 Platform ≤767),
+     панель стоит сразу под своей вкладкой (раскладку делает CSS) и раскрывается из неё: высота растёт от 0,
+     содержимое проявляется — как ответ FAQ (js/faq.js). Прежняя панель закрывается сразу, а выбранная
+     вкладка остаётся на том же месте экрана: без этого панель, закрывшаяся выше, утянула бы её из-под пальца.
+     Наведение в этом режиме вкладку не выбирает (правка пользователя 02.10). */
 (function () {
   var mouse = window.matchMedia ? window.matchMedia('(hover: hover) and (pointer: fine)') : null;
   var calm = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var EASE_OPEN = 'cubic-bezier(0.22, 1, 0.36, 1)'; // как у FAQ
   var HOVER_DELAY = 60;   // мс: курсор, проходящий через карточку по пути к соседней, её не выбирает
   var SCROLL_LOCK = 900;  // мс: пока докручиваем к вкладке, прокрутка не перевыбирает промежуточные
   var PIN_GAP = 12;       // px: зазор между закреплённым блоком и карточкой, докрученной тапом
@@ -28,8 +34,11 @@
     var scrollQuery = root.getAttribute('data-tabs-scroll');
     var scrollMode = scrollQuery && window.matchMedia ? window.matchMedia(scrollQuery) : null;
     var pin = root.getAttribute('data-tabs-pin') ? root.querySelector(root.getAttribute('data-tabs-pin')) : null;
+    var foldQuery = root.getAttribute('data-tabs-accordion');
+    var foldMode = foldQuery && window.matchMedia ? window.matchMedia(foldQuery) : null;
     var current = tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0];
     var lockUntil = 0;
+    var unfolding = [];
 
     function select(tab) {
       if (tab === current) return; // повторный выбор не перезапускает анимации панели
@@ -47,6 +56,48 @@
     }
 
     function scrolling() { return scrollMode && scrollMode.matches; }
+    function folding() { return foldMode && foldMode.matches; }
+
+    // Раскрытие панели под вкладкой: высота и поля растут от 0, содержимое проявляется чуть позже
+    function unfold(panel, height) {
+      unfolding.forEach(function (a) { a.cancel(); });
+      unfolding = [];
+      if (!panel.animate || (calm && calm.matches)) return;
+      var cs = getComputedStyle(panel);
+      var box = panel.animate([
+        { height: '0px', paddingTop: '0px', paddingBottom: '0px' },
+        { height: height + 'px', paddingTop: cs.paddingTop, paddingBottom: cs.paddingBottom }
+      ], { duration: 420, easing: EASE_OPEN });
+      panel.style.overflow = 'hidden';
+      box.onfinish = box.oncancel = function () { panel.style.overflow = ''; };
+      unfolding.push(box);
+      Array.prototype.forEach.call(panel.children, function (child) {
+        unfolding.push(child.animate(
+          [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }],
+          { duration: 350, delay: 70, easing: EASE_OPEN, fill: 'backwards' }
+        ));
+      });
+    }
+
+    // Выбор в режиме аккордеона: вкладка остаётся там же на экране, её панель раскрывается под ней.
+    // Панель, которая не помещается до низа экрана, докручивается в него — но вкладка не уходит под шапку,
+    // а вкладка, выбранная наполовину под шапкой, выезжает из-под неё.
+    // Запас снизу (кнопка WhatsApp) — scroll-margin-bottom панели, сверху — scroll-padding-top страницы.
+    function fold(tab) {
+      if (tab === current) return;
+      var top = tab.getBoundingClientRect().top;
+      select(tab);
+      var panel = document.getElementById(tab.getAttribute('aria-controls'));
+      var y = window.scrollY + tab.getBoundingClientRect().top - top;
+      window.scrollTo({ top: y, behavior: 'instant' });
+      if (!panel) return;
+      var box = panel.getBoundingClientRect();
+      var over = box.bottom + (parseFloat(getComputedStyle(panel).scrollMarginBottom) || 0) - window.innerHeight;
+      var room = top - (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0);
+      unfold(panel, box.height);
+      var move = room < 0 ? room : over > 0 ? Math.min(over, room) : 0; // вкладка под шапкой — вывести из-под неё
+      if (move) window.scrollTo({ top: y + move, behavior: calm && calm.matches ? 'auto' : 'smooth' });
+    }
 
     // Низ закреплённого блока в координатах экрана, когда он прилип: его sticky top + высота
     function edge() {
@@ -55,6 +106,11 @@
 
     // Выбор пользователем (тап, клик, клавиатура). В режиме прокрутки — ещё и докрутка под блок
     function choose(tab, focus) {
+      if (folding()) {
+        fold(tab);
+        if (focus) tab.focus();
+        return;
+      }
       select(tab);
       if (scrolling()) {
         lockUntil = Date.now() + SCROLL_LOCK;
@@ -87,7 +143,7 @@
       var timer = null;
       tabs.forEach(function (tab) {
         tab.addEventListener('mouseenter', function () {
-          if (!mouse || !mouse.matches || scrolling()) return;
+          if (!mouse || !mouse.matches || scrolling() || folding()) return;
           clearTimeout(timer);
           timer = setTimeout(function () { select(tab); }, HOVER_DELAY);
         });

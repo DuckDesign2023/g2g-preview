@@ -165,7 +165,8 @@
         <!-- Вкладки: js/tabs.js. Elementor — Nested Tabs (вертикальные), тема — блок вкладок.
              Ссылки на скачивание — общие страницы MetaQuotes / сторов; брендированные установщики G2G — вопрос к клиенту -->
         <!-- наведение на десктопе, тап на таче — как переключатели главной (правило пользователя 25.09, перенесено 28.09); панели одной высоты — ничего не прыгает -->
-        <div class="platform-switcher" data-widget="tabs" data-tabs-hover data-active-class="platform-tab--active" data-el="container">
+        <!-- ≤767 — аккордеон (правка пользователя 02.10): панель раскрывается под своей строкой; раскладка — pages.css, раскрытие — data-tabs-accordion -->
+        <div class="platform-switcher" data-widget="tabs" data-tabs-hover data-tabs-accordion="(max-width: 767px)" data-active-class="platform-tab--active" data-el="container">
           <!-- repeat: platform-tab (icon, title, meta, art) -->
           <div class="platform-switcher__list" role="tablist" aria-label="MetaTrader 5 platforms" data-el="container">
             <button class="platform-tab platform-tab--active" type="button" role="tab" id="mt5-tab-windows" aria-controls="mt5-panel-windows" aria-selected="true">

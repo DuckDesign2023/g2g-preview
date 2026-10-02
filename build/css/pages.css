@@ -807,14 +807,58 @@
   .platform-switcher__panel { align-self: stretch; }
   .platform-tab__art { display: none; } /* в узкой строке логотип ОС ложится на название — наше решение */
 }
+/* ≤767 — аккордеон (правка пользователя 02.10): строки встают столбиком, и панель под всем списком оказывалась далеко
+   от выбранной строки. Теперь панель раскрывается сразу под своей строкой и составляет с ней одну карточку.
+   CUSTOM-CSS: список — display: contents, строки и панели становятся соседями в одной колонке и чередуются через order
+   (разметка вкладок и порядок чтения прежние: tablist, затем панели). Раскрытие и удержание строки на месте — js/tabs.js
+   (data-tabs-accordion). Elementor — отдельный виджет Accordion на мобильном вместо Nested Tabs. */
 @media (max-width: 767px) {
-  .platform-switcher__list { grid-template-columns: minmax(0, 1fr); gap: var(--space-8); }
-  .platform-switcher__panel {
-    gap: var(--space-20);
-    padding: var(--space-16);
+  .platform-switcher {
+    gap: var(--space-8);
+    overflow-anchor: none; /* строку под пальцем удерживает скрипт — без встречной поправки браузера */
   }
-  .platform-switcher__stage { border-radius: var(--radius-sm); }
-  .platform-switcher__foot { flex-direction: column; }
+  .platform-switcher__list { display: contents; }
+  .platform-tab:nth-child(1) { order: 1; }
+  .platform-tab:nth-child(2) { order: 3; }
+  .platform-tab:nth-child(3) { order: 5; }
+  .platform-tab:nth-child(4) { order: 7; }
+  .platform-tab:nth-child(5) { order: 9; }
+  .platform-switcher__panel:nth-child(2) { order: 2; }
+  .platform-switcher__panel:nth-child(3) { order: 4; }
+  .platform-switcher__panel:nth-child(4) { order: 6; }
+  .platform-switcher__panel:nth-child(5) { order: 8; }
+  .platform-switcher__panel:nth-child(6) { order: 10; }
+  .platform-tab {
+    --tab-mark: var(--color-text-on-light-secondary);
+    --tab-turn: 90deg;
+    flex: none;
+  }
+  .platform-tab--active {
+    --tab-mark: var(--color-accent);
+    --tab-turn: -90deg;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  /* стрелка есть у каждой строки: вниз — раскроется, вверх — раскрыта */
+  .platform-tab::after {
+    background-color: var(--tab-mark);
+    rotate: var(--tab-turn);
+    visibility: visible;
+    transition: rotate var(--dur-base) var(--ease-out), background-color var(--dur-fast) ease;
+  }
+  .platform-switcher__panel {
+    flex: none;
+    gap: var(--space-16);
+    margin-top: calc(var(--space-8) * -1); /* вплотную к своей строке: одна карточка */
+    padding: var(--space-16);
+    border-top: 0;
+    border-color: var(--color-border-mint);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    scroll-margin-bottom: calc(var(--fab-size) + var(--space-40)); /* раскрытая панель встаёт выше кнопки WhatsApp */
+  }
+  .platform-switcher__stage { border-radius: var(--radius-xs); }
+  .platform-switcher__foot { flex-direction: column; gap: var(--space-16); }
+  .platform-switcher__title { display: none; } /* название уже в строке над панелью */
   .platform-switcher__cta { align-self: stretch; margin-top: 0; }
 }
 
