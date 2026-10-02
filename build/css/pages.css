@@ -2267,10 +2267,11 @@
 
 /* ════════ 14 Demo · Demo account (6114:3871) ═════════
    Белая, поля 160 (контент 1120): заголовок по центру · [карточка 628 | карточка] Fog 20% с мини-визуалами · кнопка.
-   Свечение под карточками — растр с альфой (assets/_src/demo/account-glow.html) */
+   Свечение под карточками — растр с альфой (assets/_src/demo/account-glow.html); ширина — не меньше макета,
+   но во всю секцию: у левого края растра альфа не нулевая, на экранах шире 1440 там был виден обрез */
 .demo-account {
   padding-block: var(--section-pad-md);
-  background: var(--color-surface-light) url('../assets/img/demo-account-glow.webp') center top / 1440px 773px no-repeat;
+  background: var(--color-surface-light) url('../assets/img/demo-account-glow.webp') center top / max(1440px, 100%) 773px no-repeat;
 }
 .demo-account__inner {
   display: flex;
