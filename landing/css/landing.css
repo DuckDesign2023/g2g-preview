@@ -679,7 +679,8 @@ a { color: inherit; }
 .site-footer__link { color: var(--color-grey-400); text-decoration: none; transition: color 0.2s; }
 .site-footer__link:hover { color: var(--color-white); }
 
-.socials { display: flex; column-gap: 0.75rem; justify-self: end; }
+/* 6 иконок по 44px на экране 320 в ряд не помещаются — перенос (в Elementor Social Icons переносятся сами) */
+.socials { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-self: end; }
 .socials__link {
   display: flex;
   align-items: center;
