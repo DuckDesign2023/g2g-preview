@@ -1475,14 +1475,15 @@
 
 /* ════════ 11 About · Our presence (6113:3860) ═════════
    Фон из Group 38 (6227:6067): слой «планета» (горизонт, свечение, звёзды) — растр с альфой сверху
-   (assets/_src/about/presence-planet.html), под ним Rectangle 4804 — градиент тёмный → мята 16% → белый,
+   (assets/_src/about/presence-planet-wide.html; кадр 2200 — средние 1440 как в макете, по бокам свечение гаснет само,
+   на экранах шире макета края картинки не видны), под ним Rectangle 4804 — градиент тёмный → мята 16% → белый,
    привязанный к НИЗУ секции (в Figma 391 / 479 / 660 из 657, --gradient-fade-to-white): на мобильном секция выше, тёмная часть растёт вместе
    с контентом, а переход в белый всегда проходит по низу полосы, как в макете.
    CUSTOM-CSS: два слоя фона (растр + градиент с остановками calc) — в Elementor фон-картинка + Background Overlay градиентом. */
 .presence {
   padding-block: 58px var(--section-pad-md);
   background:
-    url('../assets/img/about-presence-planet.webp') center top / 1440px auto no-repeat,
+    url('../assets/img/about-presence-planet.webp') center top / 2200px auto no-repeat,
     var(--gradient-fade-to-white);
 }
 .presence__inner {
@@ -2687,4 +2688,182 @@
 }
 @media (max-width: 767px) {
   .risk-note { padding: var(--space-20); }
+}
+
+/* ════════ 19–24 Юридические документы (Terms, Privacy, Order Execution, Security of Funds, AML, Complaints) ═════════
+   Макета в Figma нет — собрано из 17 Article: шапка Solid, Article head без рубрики, меты и обложки, тело «текст + On this page».
+   Тексты — дословно со старого сайта (генератор _src/pages/gen_legal_docs.py, контент — _src/pages/legal-docs/).
+   В WP тело документа — обычное содержимое страницы (заголовки, абзацы, списки), оглавление строится из h2. */
+.doc-head { padding-bottom: 0; }
+/* линия под шапкой документа — по ширине колонки (на экранах шире 1440 не уходит в поля) */
+.doc-head__rule {
+  align-self: stretch;
+  height: var(--border-width);
+  margin: var(--space-20) 0 0;
+  border: 0;
+  background-color: var(--line);
+}
+.doc-head__lead {
+  max-width: var(--doc-measure);
+  color: var(--fg-2);
+}
+.doc-body {
+  --doc-measure: 660px; /* колонка чтения: ~82 знака в строке при Body 16 (в 17 Article — 840, ~100 знаков) */
+  padding-top: var(--space-40);
+}
+.doc-head { --doc-measure: 660px; }
+.doc-body__inner { justify-content: space-between; } /* текст слева, оглавление у правого края сетки */
+/* Ритм: зазор 16 между блоками; перед разделом 56, перед подразделом 32, список — ближе к своей вводной строке (12) */
+.doc-content {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--space-16);
+  min-width: 0;
+  max-width: var(--doc-measure);
+}
+.doc-content__h {
+  margin-top: var(--space-40);
+  color: var(--fg);
+  scroll-margin-top: var(--space-8); /* сверх общего scroll-padding-top (шапка + 16) — заголовок встаёт на 24 ниже шапки */
+}
+.doc-content__h--first { margin-top: 0; }
+.doc-content__sub {
+  margin-top: var(--space-16);
+  color: var(--fg);
+}
+/* длинный текст — строки на всю ширину колонки: глобальный balance резал бы короткие абзацы уже соседних */
+.doc-content__p {
+  color: var(--fg-2);
+  text-wrap: pretty;
+}
+.doc-link {
+  color: var(--fg-accent);
+  text-decoration-line: underline;
+  text-underline-offset: 3px;
+}
+/* Список: маркер — квадрат 5 (как .square-list, цвет Accent Deep). CUSTOM-CSS: ::before; Elementor — Icon List */
+.doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin-top: calc(var(--space-4) * -1);
+}
+.doc-list__item {
+  position: relative;
+  padding-left: var(--space-28);
+  color: var(--fg-2);
+  text-wrap: pretty;
+}
+.doc-list__item::before {
+  content: "";
+  position: absolute;
+  top: calc((1lh - 5px) / 2);
+  left: var(--space-8);
+  width: 5px;
+  height: 5px;
+  background-color: var(--fg-accent);
+}
+/* пункты со своей нумерацией в тексте («a.», «a)», «(a)») — без маркера */
+.doc-list__item--plain::before { content: none; }
+/* Определения (Privacy · Personal Information): термин · описание, строки разделены линией */
+.doc-defs {
+  display: grid;
+  grid-template-columns: 244px minmax(0, 1fr);
+  border-bottom: var(--border-width) solid var(--line);
+}
+.doc-defs__term,
+.doc-defs__desc {
+  padding-block: var(--space-12);
+  border-top: var(--border-width) solid var(--line);
+}
+.doc-defs__term {
+  padding-right: var(--space-24); /* зазор колонок — полем термина: линия строки остаётся сплошной */
+  color: var(--fg);
+  font-weight: var(--fw-semibold);
+}
+.doc-defs__desc {
+  margin: 0;
+  color: var(--fg-2);
+  text-wrap: pretty;
+}
+/* Оглавление: длинный список (AML — 17 разделов) прокручивается внутри карточки и не заходит под кнопку WhatsApp
+   (низ карточки — на 24 выше неё); на ≤1024 свёрнуто (js/doc-toc.js) */
+.doc-toc {
+  max-height: calc(100svh - var(--header-h) - var(--space-24) - var(--fab-size) - var(--space-48));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.doc-toc__box { align-self: stretch; }
+.doc-toc__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  color: var(--fg-overline);
+  list-style: none;
+  pointer-events: none; /* на десктопе оглавление всегда раскрыто */
+}
+.doc-toc__summary::-webkit-details-marker { display: none; }
+.doc-toc__list {
+  gap: var(--space-12);
+  margin-top: var(--space-16);
+}
+@media (max-width: 1024px) {
+  .doc-toc {
+    align-self: flex-start;
+    width: 100%;
+    max-width: var(--doc-measure); /* над текстом — той же ширины, что колонка */
+    max-height: none;
+    padding: 0;
+    overflow: visible;
+  }
+  .doc-toc__summary {
+    min-height: 56px;
+    padding-inline: var(--space-20);
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  /* CUSTOM-CSS: шеврон маской, поворот — от состояния (переменную задаёт .doc-toc__box--open) */
+  .doc-toc__summary::after {
+    content: "";
+    flex: none;
+    width: 10px;
+    height: 10px;
+    background-color: currentColor;
+    mask: url("../assets/icons/chevron-down-10.svg") center / contain no-repeat;
+    rotate: var(--toc-chevron, 0deg);
+    transition: rotate var(--dur-base) var(--ease-out);
+  }
+  .doc-toc__box--open { --toc-chevron: 180deg; }
+  .doc-toc__list {
+    gap: 0;
+    margin-top: 0;
+    padding: 0 var(--space-20) var(--space-8);
+  }
+  /* строка-ссылка 44 по высоте — зона касания */
+  .doc-toc__link {
+    display: block;
+    padding-block: var(--space-12);
+  }
+  .doc-toc__divider,
+  .doc-toc__back { display: none; }
+  .doc-content { flex: none; } /* в колонке основа 0 схлопнула бы текст */
+}
+@media (max-width: 767px) {
+  .doc-head__rule { margin-top: var(--space-12); }
+  .doc-body { padding-top: var(--space-24); }
+  .doc-content__h { margin-top: var(--space-24); }
+  .doc-content__h--first { margin-top: 0; }
+  .doc-defs { grid-template-columns: minmax(0, 1fr); }
+  .doc-defs__term {
+    padding-right: 0;
+    padding-bottom: 0;
+  }
+  .doc-defs__desc {
+    padding-top: var(--space-4);
+    border-top: 0;
+  }
 }
