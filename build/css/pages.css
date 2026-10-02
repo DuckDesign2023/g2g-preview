@@ -2735,7 +2735,7 @@
 }
 
 /* ════════ 19–24 Юридические документы (Terms, Privacy, Order Execution, Security of Funds, AML, Complaints) ═════════
-   Макета в Figma нет — собрано из 17 Article: шапка Solid, Article head без рубрики, меты и обложки, тело «текст + On this page».
+   Макета в Figma нет — собрано из 17 Article: шапка Solid, Article head без рубрики, меты и обложки, тело «текст + оглавление» (здесь «Table of contents», в Article — «On this page»).
    Тексты — дословно со старого сайта (генератор _src/pages/gen_legal_docs.py, контент — _src/pages/legal-docs/).
    В WP тело документа — обычное содержимое страницы (заголовки, абзацы, списки), оглавление строится из h2. */
 .doc-head { padding-bottom: 0; }
@@ -2832,7 +2832,7 @@
   text-wrap: pretty;
 }
 /* Оглавление: длинный список (AML — 17 разделов) прокручивается внутри карточки и не заходит под кнопку WhatsApp
-   (низ карточки — на 24 выше неё); на ≤1024 свёрнуто (js/doc-toc.js) */
+   (низ карточки — на 24 выше неё); на ≤1024 свёрнуто в закреплённую строку (ниже, js/doc-toc.js) */
 .doc-toc {
   max-height: calc(100svh - var(--header-h) - var(--space-24) - var(--fab-size) - var(--space-48));
   overflow-y: auto;
@@ -2855,21 +2855,54 @@
   gap: var(--space-12);
   margin-top: var(--space-16);
 }
+/* ≤1024 — оглавление свёрнуто в строку и закреплено под шапкой (правка пользователя 02.10): раскрыть его можно из любого
+   места документа, не возвращаясь в начало. Обёртка (aside) — закреплённая полоса высотой в одну строку: её белая подложка
+   закрывает текст, уходящий под строку, а карточка со списком раскрывается поверх текста и не сдвигает его.
+   CUSTOM-CSS: sticky + список поверх потока; Elementor — Table of Contents с Sticky (Motion Effects) и Minimize Box. */
 @media (max-width: 1024px) {
+  .doc-body { --toc-bar: 56px; }
+  .doc-body__inner { gap: var(--space-24); } /* + нижнее поле полосы = прежние 32 до текста */
   .doc-toc {
+    position: sticky;
+    top: var(--pin-top);
+    z-index: 5; /* над текстом, под шапкой и кнопкой WhatsApp */
     align-self: flex-start;
     width: 100%;
     max-width: var(--doc-measure); /* над текстом — той же ширины, что колонка */
+    height: calc(var(--toc-bar) + var(--space-8) * 2);
     max-height: none;
-    padding: 0;
+    padding: var(--space-8) 0;
+    border: 0;
+    border-radius: 0;
+    background-color: var(--color-surface-light);
     overflow: visible;
   }
+  /* текст под закреплённой строкой уходит в белый, а не обрезается по линии */
+  .doc-toc::after {
+    content: "";
+    position: absolute;
+    inset: 100% 0 auto;
+    height: var(--space-16);
+    background-image: linear-gradient(var(--color-surface-light), transparent);
+    pointer-events: none;
+  }
+  .doc-toc__box {
+    position: relative;
+    z-index: 1;
+    border: var(--border-width) solid var(--color-border-on-light);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface-light);
+    transition: box-shadow var(--dur-base) var(--ease-out);
+  }
+  .doc-toc__box--open { box-shadow: var(--shadow-card-light); }
   .doc-toc__summary {
-    min-height: 56px;
+    min-height: calc(var(--toc-bar) - var(--border-width) * 2);
     padding-inline: var(--space-20);
     cursor: pointer;
     pointer-events: auto;
   }
+  /* выбранный раздел встаёт под закреплённой строкой, а не под ней */
+  .doc-content__h { scroll-margin-top: calc(var(--toc-bar) + var(--space-8)); }
   /* CUSTOM-CSS: шеврон маской, поворот — от состояния (переменную задаёт .doc-toc__box--open) */
   .doc-toc__summary::after {
     content: "";
@@ -2882,10 +2915,17 @@
     transition: rotate var(--dur-base) var(--ease-out);
   }
   .doc-toc__box--open { --toc-chevron: 180deg; }
+  /* длинный список (AML — 17 разделов) прокручивается внутри карточки; её низ — выше кнопки WhatsApp */
   .doc-toc__list {
+    flex-wrap: nowrap;
     gap: 0;
+    max-height: calc(100svh - var(--pin-top) - var(--toc-bar) - var(--fab-size) - var(--space-48));
     margin-top: 0;
     padding: 0 var(--space-20) var(--space-8);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
   }
   /* строка-ссылка 44 по высоте — зона касания */
   .doc-toc__link {
